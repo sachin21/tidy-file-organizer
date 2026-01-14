@@ -81,5 +81,52 @@ RSpec.describe TidyFileOrganizer::Organizer do
         expect(File.exist?(File.join(tmp_dir, "test.jpg"))).to be false
       end
     end
+
+    context "再帰モードの場合" do
+      before do
+        # サブディレクトリとファイルを作成
+        FileUtils.mkdir_p(File.join(tmp_dir, "subdir1"))
+        FileUtils.mkdir_p(File.join(tmp_dir, "subdir2", "nested"))
+        
+        FileUtils.touch(File.join(tmp_dir, "subdir1", "photo.jpg"))
+        FileUtils.touch(File.join(tmp_dir, "subdir2", "project_a_doc.txt"))
+        FileUtils.touch(File.join(tmp_dir, "subdir2", "nested", "image.jpg"))
+      end
+
+      it "サブディレクトリ内のファイルも整理される (Dry-run)" do
+        output = capture_stdout { organizer.run(dry_run: true, recursive: true) }
+        
+        expect(output).to match(/subdir1\/photo\.jpg/)
+        expect(output).to match(/subdir2\/project_a_doc\.txt/)
+        expect(output).to match(/subdir2\/nested\/image\.jpg/)
+        expect(output).to match(/\[再帰モード\]/)
+      end
+
+      it "サブディレクトリ内のファイルも実際に移動される (Force)" do
+        organizer.run(dry_run: false, recursive: true)
+        
+        # ルート階層のファイルが移動される
+        expect(File.exist?(File.join(tmp_dir, "images", "test.jpg"))).to be true
+        expect(File.exist?(File.join(tmp_dir, "work", "project_a.txt"))).to be true
+        
+        # サブディレクトリのファイルも移動される
+        expect(File.exist?(File.join(tmp_dir, "images", "photo.jpg"))).to be true
+        expect(File.exist?(File.join(tmp_dir, "work", "project_a_doc.txt"))).to be true
+        expect(File.exist?(File.join(tmp_dir, "images", "image.jpg"))).to be true
+        
+        # 元の場所にはない
+        expect(File.exist?(File.join(tmp_dir, "subdir1", "photo.jpg"))).to be false
+        expect(File.exist?(File.join(tmp_dir, "subdir2", "project_a_doc.txt"))).to be false
+      end
+    end
+  end
+
+  def capture_stdout
+    original_stdout = $stdout
+    $stdout = StringIO.new
+    yield
+    $stdout.string
+  ensure
+    $stdout = original_stdout
   end
 end

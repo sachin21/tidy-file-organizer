@@ -84,6 +84,16 @@ spec/data/
 ./exe/tidy-file-organizer run spec/data/ja --force
 ```
 
-## 注意
-現在の実装では、ルート階層のファイルのみが整理対象です。
-サブディレクトリ内のファイルは整理されません。
+## 再帰モード
+
+サブディレクトリ内のファイルも整理したい場合は、`--recursive` または `-r` オプションを使用します。
+
+```bash
+# 再帰モードでDry-run
+./exe/tidy-file-organizer run spec/data/en --recursive
+
+# 再帰モードで実際に整理
+./exe/tidy-file-organizer run spec/data/en --recursive --force
+```
+
+デフォルトではルート階層のファイルのみが整理対象です。

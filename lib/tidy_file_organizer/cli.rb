@@ -21,7 +21,8 @@ module TidyFileOrganizer
         organizer.setup
       when "run"
         dry_run = !@args.include?("--force")
-        organizer.run(dry_run: dry_run)
+        recursive = @args.include?("--recursive") || @args.include?("-r")
+        organizer.run(dry_run: dry_run, recursive: recursive)
       end
     end
 
@@ -37,7 +38,9 @@ module TidyFileOrganizer
       puts "  setup    整理ルールをインタラクティブに設定します"
       puts "  run      設定に基づいてファイルを整理します"
       puts "\nOptions:"
-      puts "  --force  Dry-runを無効にして実際にファイルを移動します"
+      puts "  --force       Dry-runを無効にして実際にファイルを移動します"
+      puts "  --recursive   サブディレクトリ内のファイルも再帰的に整理します"
+      puts "  -r            --recursive の短縮形"
     end
   end
 end

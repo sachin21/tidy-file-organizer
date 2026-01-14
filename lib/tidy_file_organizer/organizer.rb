@@ -13,7 +13,7 @@ module TidyFileOrganizer
       SetupPrompt.new(@config_manager).run(@target_dir)
     end
 
-    def run(dry_run: true)
+    def run(dry_run: true, recursive: false)
       config = @config_manager.load
 
       unless config
@@ -21,9 +21,11 @@ module TidyFileOrganizer
         return
       end
 
-      puts "--- 整理を開始します (#{@target_dir}) #{dry_run ? '[Dry-run モード]' : ''} ---"
+      mode_label = dry_run ? '[Dry-run モード]' : ''
+      recursive_label = recursive ? '[再帰モード]' : ''
+      puts "--- 整理を開始します (#{@target_dir}) #{mode_label} #{recursive_label} ---"
 
-      files = collect_files
+      files = collect_files(recursive: recursive)
 
       if files.empty?
         puts "整理対象のファイルが見つかりませんでした。"
@@ -37,10 +39,27 @@ module TidyFileOrganizer
 
     private
 
-    def collect_files
-      Dir.children(@target_dir)
-         .map { |entry| File.join(@target_dir, entry) }
-         .select { |path| File.file?(path) }
+    def collect_files(recursive: false)
+      if recursive
+        collect_files_recursively(@target_dir)
+      else
+        Dir.children(@target_dir)
+           .map { |entry| File.join(@target_dir, entry) }
+           .select { |path| File.file?(path) }
+      end
+    end
+
+    def collect_files_recursively(dir)
+      files = []
+      Dir.children(dir).each do |entry|
+        path = File.join(dir, entry)
+        if File.file?(path)
+          files << path
+        elsif File.directory?(path)
+          files.concat(collect_files_recursively(path))
+        end
+      end
+      files
     end
 
     def organize_files(files, config, dry_run)
@@ -80,15 +99,16 @@ module TidyFileOrganizer
 
     def move_file(file_path, dest_dir_name, dry_run:)
       filename = File.basename(file_path)
+      relative_path = file_path.sub(@target_dir + '/', '')
       dest_dir = File.join(@target_dir, dest_dir_name)
       dest_path = File.join(dest_dir, filename)
 
       if dry_run
-        puts "[Dry-run] #{filename} -> #{dest_dir_name}/"
+        puts "[Dry-run] #{relative_path} -> #{dest_dir_name}/"
       else
         FileUtils.mkdir_p(dest_dir) unless Dir.exist?(dest_dir)
         FileUtils.mv(file_path, dest_path)
-        puts "Moved: #{filename} -> #{dest_dir_name}/"
+        puts "Moved: #{relative_path} -> #{dest_dir_name}/"
       end
     end
   end

@@ -1,6 +1,8 @@
+require_relative 'lib/tidy_file_organizer/version'
+
 Gem::Specification.new do |spec|
   spec.name          = 'tidy-file-organizer'
-  spec.version       = '0.1.0'
+  spec.version       = TidyFileOrganizer::VERSION
   spec.authors        = ['sachin21']
   spec.email          = ['sachin21@example.com'] # 適宜変更してください
 

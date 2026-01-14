@@ -42,6 +42,95 @@ RSpec.describe TidyFileOrganizer::Organizer do
     it '一致するものがない場合はnilを返す' do
       expect(organizer.send(:determine_destination, 'unknown.txt', config)).to be_nil
     end
+
+    context 'パターンマッチングを使用する場合' do
+      let(:config_with_patterns) do
+        {
+          extensions: { 'images' => %w[jpg png], 'docs' => ['pdf'] },
+          keywords: { 'work' => %w[invoice] },
+          patterns: {
+            'ByDate' => [
+              { 'pattern' => '\d{4}-\d{2}-\d{2}', 'description' => 'Date format: 2024-01-15' },
+              { 'pattern' => '\d{8}', 'description' => 'Date format: 20240115' },
+            ],
+            'Versions' => [
+              { 'pattern' => 'v\d+\.\d+\.\d+', 'description' => 'Semantic version: v1.0.0' },
+              { 'pattern' => '_v\d+', 'description' => 'Version suffix: file_v2' },
+            ],
+          },
+        }
+      end
+
+      it 'パターンに基づいて正しいディレクトリを返す（日付形式）' do
+        expect(organizer.send(:determine_destination, 'report_2024-01-15.pdf', config_with_patterns)).to eq('ByDate')
+        expect(organizer.send(:determine_destination, 'file_20240115.txt', config_with_patterns)).to eq('ByDate')
+      end
+
+      it 'パターンに基づいて正しいディレクトリを返す（バージョン）' do
+        expect(organizer.send(:determine_destination, 'app_v1.0.0.zip', config_with_patterns)).to eq('Versions')
+        expect(organizer.send(:determine_destination, 'document_v2.pdf', config_with_patterns)).to eq('Versions')
+      end
+
+      it 'パターンマッチングはキーワードより優先される' do
+        # パターンにマッチする場合、キーワードよりもパターンが優先される
+        expect(organizer.send(:determine_destination, 'invoice_2024-01-15.pdf', config_with_patterns)).to eq('ByDate')
+      end
+
+      it 'パターンマッチングに失敗した場合はキーワードや拡張子にフォールバックする' do
+        expect(organizer.send(:determine_destination, 'invoice.pdf', config_with_patterns)).to eq('work')
+        expect(organizer.send(:determine_destination, 'photo.jpg', config_with_patterns)).to eq('images')
+      end
+    end
+
+    context '新しいカテゴリ（Phase 1）のテスト' do
+      let(:config_with_new_categories) do
+        {
+          extensions: {
+            'Databases' => %w[db sqlite sqlite3 sql],
+            'Fonts' => %w[ttf otf woff woff2],
+            'eBooks' => %w[epub mobi azw],
+            'Logs' => %w[log out err],
+            'Data' => %w[csv tsv parquet],
+          },
+          keywords: {
+            'Receipts' => %w[receipt 領収書],
+            'Reports' => %w[report レポート],
+            'Templates' => %w[template sample],
+          },
+        }
+      end
+
+      it 'データベースファイルを正しく分類する' do
+        expect(organizer.send(:determine_destination, 'app.db', config_with_new_categories)).to eq('Databases')
+        expect(organizer.send(:determine_destination, 'data.sqlite3', config_with_new_categories)).to eq('Databases')
+      end
+
+      it 'フォントファイルを正しく分類する' do
+        expect(organizer.send(:determine_destination, 'font.ttf', config_with_new_categories)).to eq('Fonts')
+        expect(organizer.send(:determine_destination, 'style.woff2', config_with_new_categories)).to eq('Fonts')
+      end
+
+      it '電子書籍ファイルを正しく分類する' do
+        expect(organizer.send(:determine_destination, 'book.epub', config_with_new_categories)).to eq('eBooks')
+        expect(organizer.send(:determine_destination, 'novel.mobi', config_with_new_categories)).to eq('eBooks')
+      end
+
+      it 'ログファイルを正しく分類する' do
+        expect(organizer.send(:determine_destination, 'app.log', config_with_new_categories)).to eq('Logs')
+        expect(organizer.send(:determine_destination, 'error.err', config_with_new_categories)).to eq('Logs')
+      end
+
+      it 'データファイルを正しく分類する' do
+        expect(organizer.send(:determine_destination, 'data.csv', config_with_new_categories)).to eq('Data')
+        expect(organizer.send(:determine_destination, 'export.parquet', config_with_new_categories)).to eq('Data')
+      end
+
+      it '新しいキーワードで正しく分類する' do
+        expect(organizer.send(:determine_destination, 'receipt_jan.pdf', config_with_new_categories)).to eq('Receipts')
+        expect(organizer.send(:determine_destination, 'report_q1.docx', config_with_new_categories)).to eq('Reports')
+        expect(organizer.send(:determine_destination, 'template_email.txt', config_with_new_categories)).to eq('Templates')
+      end
+    end
   end
 
   describe '#run' do

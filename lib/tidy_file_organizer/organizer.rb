@@ -47,7 +47,9 @@ module TidyFileOrganizer
     end
 
     def extract_organized_dirs(config)
-      (config[:extensions].keys + config[:keywords].keys).uniq
+      dirs = config[:extensions].keys + config[:keywords].keys
+      dirs += config[:patterns].keys if config[:patterns]
+      dirs.uniq
     end
 
     def handle_empty_files
@@ -71,12 +73,33 @@ module TidyFileOrganizer
       filename = File.basename(file_path)
       extension = extract_extension(file_path)
 
-      find_by_keyword(filename, config[:keywords]) ||
+      find_by_pattern(filename, config[:patterns]) ||
+        find_by_keyword(filename, config[:keywords]) ||
         find_by_extension(extension, config[:extensions])
     end
 
     def extract_extension(file_path)
       File.extname(file_path).delete('.').downcase
+    end
+
+    def find_by_pattern(filename, patterns_config)
+      return nil unless patterns_config
+
+      patterns_config.each do |dir, patterns|
+        patterns.each do |pattern_info|
+          pattern = pattern_info['pattern'] || pattern_info[:pattern]
+          next unless pattern
+
+          begin
+            regex = Regexp.new(pattern)
+            return dir if filename.match?(regex)
+          rescue RegexpError => e
+            # Skip invalid regex patterns
+            warn "Invalid regex pattern '#{pattern}': #{e.message}"
+          end
+        end
+      end
+      nil
     end
 
     def find_by_keyword(filename, keywords_config)

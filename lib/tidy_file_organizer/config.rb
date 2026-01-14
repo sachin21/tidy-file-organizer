@@ -44,7 +44,7 @@ module TidyFileOrganizer
     end
 
     def default
-      { extensions: {}, keywords: {} }
+      { extensions: {}, keywords: {}, patterns: {} }
     end
 
     def path

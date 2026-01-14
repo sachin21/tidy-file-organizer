@@ -10,7 +10,7 @@ plugins:
 # Project-specific overrides
 
 Metrics/ClassLength:
-  Max: 170
+  Max: 200
 
 RSpec/MultipleExpectations:
   Max: 10

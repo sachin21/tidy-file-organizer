@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-A Ruby CLI tool that organizes files based on extensions, keywords, and dates. The tool supports internationalization (English/Japanese) based on the `LANG` environment variable and stores per-directory configurations using MD5 hashes.
+A Ruby CLI tool that organizes files based on extensions, keywords, regex patterns, and dates. The tool supports internationalization (English/Japanese) based on the `LANG` environment variable and stores per-directory configurations using MD5 hashes.
 
 ## Development Commands
 
@@ -60,9 +60,10 @@ ruby -I lib ./exe/tidyify run spec/data/ja --recursive
   - `organize-by-date`, `find-duplicates`, `remove-duplicates`: Directory is required
   - Options are parsed by checking for flags like `--dry-run`, `--recursive`/`-r`, `--pattern=<value>`, `--no-confirm`
 
-- **Organizer** (`lib/tidy_file_organizer/organizer.rb`): Main orchestrator for file organization. Implements two-level priority system:
-  1. Keyword matching (higher priority) - matches keywords anywhere in filename
-  2. Extension matching (lower priority) - matches file extensions
+- **Organizer** (`lib/tidy_file_organizer/organizer.rb`): Main orchestrator for file organization. Implements three-level priority system:
+  1. Pattern matching (highest priority) - matches regex patterns in filename
+  2. Keyword matching (high priority) - matches keywords anywhere in filename
+  3. Extension matching (normal priority) - matches file extensions
 
 - **Config** (`lib/tidy_file_organizer/config.rb`): Manages per-directory configuration using MD5 hash of directory path. Stores configs in `~/.config/tidy-file-organizer/[MD5hash].yml`. Supports default config references to avoid duplication.
 
@@ -95,11 +96,30 @@ Default configurations are sourced from `config/default.yml` and `config/default
 ```yaml
 language: en  # or 'ja'
 extensions:
-  Images: [jpg, jpeg, png, gif, bmp, svg, webp]
+  Images: [jpg, jpeg, png, gif, bmp, svg, webp, heic, heif, tiff, avif, ico, raw]
   Documents: [pdf, doc, docx, txt, md]
+  Databases: [db, sqlite, sqlite3, sql]
+  Fonts: [ttf, otf, woff, woff2]
+  eBooks: [epub, mobi, azw]
+  Logs: [log, out, err]
+  Data: [csv, tsv, parquet]
 keywords:
   Screenshots: [screenshot, スクリーンショット, スクショ]
   Invoices: [invoice, 請求書]
+  Receipts: [receipt, 領収書, レシート]
+  Reports: [report, 報告書, レポート]
+  Templates: [template, テンプレート, sample]
+patterns:
+  ByDate:
+  - pattern: '\d{4}-\d{2}-\d{2}'
+    description: 'Date format: 2024-01-15'
+  - pattern: '\d{8}'
+    description: 'Date format: 20240115'
+  Versions:
+  - pattern: 'v\d+\.\d+\.\d+'
+    description: 'Semantic version: v1.0.0'
+  - pattern: '_v\d+'
+    description: 'Version suffix: file_v2'
 ```
 
 **Interactive Setup Input Format**: `extensions,list:directory keyword,list:directory`
@@ -117,16 +137,29 @@ keywords:
 ### File Organization Priority
 
 When running `tidyify run`:
-1. **Keyword matching** is checked first (entire filename)
-2. **Extension matching** is checked second (file extension only)
-3. Files matching neither are skipped
-4. Organized directories are excluded from processing to prevent reorganizing already-organized files
+1. **Pattern matching** is checked first (regex patterns in filename) - highest priority
+2. **Keyword matching** is checked second (entire filename) - high priority
+3. **Extension matching** is checked third (file extension only) - normal priority
+4. Files matching none of the above are skipped
+5. Organized directories are excluded from processing to prevent reorganizing already-organized files
+
+**Priority Example**:
+- File: `invoice_2024-01-15.pdf`
+- Pattern match: `\d{4}-\d{2}-\d{2}` → Goes to `ByDate/` folder
+- Even though "invoice" keyword exists, pattern takes precedence
 
 **Exclusion Mechanism**:
-- `Organizer#extract_organized_dirs` collects all directory names from config (both extensions and keywords)
+- `Organizer#extract_organized_dirs` collects all directory names from config (extensions, keywords, and patterns)
 - In recursive mode, `FileHelper#excluded_path?` checks if any part of the file's relative path matches an organized directory name
 - This prevents files like `images/photo.jpg` from being re-organized into `images/images/photo.jpg`
 - Empty directories are automatically cleaned up after recursive organization (excluding the target directory and organized directories)
+
+**Pattern Matching Details**:
+- Patterns are defined as Ruby regular expressions in the config file
+- Each pattern category can have multiple regex patterns
+- Patterns are matched against the full filename (including extension)
+- Invalid regex patterns are skipped with a warning message
+- Pattern matching supports both string keys ('pattern') and symbol keys (:pattern) for flexibility
 
 ## Code Style
 

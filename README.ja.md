@@ -34,7 +34,7 @@ gem install ./tidy-file-organizer-0.1.0.gem
 
 ```bash
 bundle install
-ruby -I lib ./exe/tidy-ify [command] [options]
+ruby -I lib ./exe/tidyify [command] [options]
 ```
 
 ## 使い方
@@ -42,7 +42,7 @@ ruby -I lib ./exe/tidy-ify [command] [options]
 ### 1. セットアップ（整理ルールの設定）
 
 ```bash
-tidy-ify setup [ディレクトリパス]
+tidyify setup [ディレクトリパス]
 ```
 
 対話形式で整理ルールを設定します：
@@ -68,10 +68,10 @@ tidy-ify setup [ディレクトリパス]
 
 ```bash
 # ルートディレクトリのみ
-tidy-ify run [ディレクトリパス]
+tidyify run [ディレクトリパス]
 
 # サブディレクトリも含めて
-tidy-ify run [ディレクトリパス] --recursive
+tidyify run [ディレクトリパス] --recursive
 ```
 
 実行例：
@@ -87,46 +87,46 @@ tidy-ify run [ディレクトリパス] --recursive
 
 ```bash
 # 問題がなければ --force オプションで実行
-tidy-ify run [ディレクトリパス] --force
+tidyify run [ディレクトリパス] --force
 
 # 再帰モードと組み合わせ
-tidy-ify run [ディレクトリパス] --recursive --force
+tidyify run [ディレクトリパス] --recursive --force
 ```
 
 ## コマンド一覧
 
 ### 基本的な整理
 ```
-tidy-ify setup [directory]              # 整理ルールを設定
-tidy-ify run [directory]                # Dry-run（シミュレーション）
-tidy-ify run [directory] --force        # 実際に整理を実行
-tidy-ify run [directory] --recursive    # サブディレクトリも対象
-tidy-ify run [directory] -r --force     # 再帰モードで実行
+tidyify setup [directory]              # 整理ルールを設定
+tidyify run [directory]                # Dry-run（シミュレーション）
+tidyify run [directory] --force        # 実際に整理を実行
+tidyify run [directory] --recursive    # サブディレクトリも対象
+tidyify run [directory] -r --force     # 再帰モードで実行
 ```
 
 ### 日付ベースの整理
 ```
 # 年ごとに整理（例: 2023/, 2024/）
-tidy-ify organize-by-date [directory] --pattern=year
+tidyify organize-by-date [directory] --pattern=year
 
 # 年月ごとに整理（例: 2023-01/, 2023-06/）
-tidy-ify organize-by-date [directory] --pattern=year-month
+tidyify organize-by-date [directory] --pattern=year-month
 
 # 年月日ごとに整理（例: 2023-01-15/）
-tidy-ify organize-by-date [directory] --pattern=year-month-day --force
+tidyify organize-by-date [directory] --pattern=year-month-day --force
 ```
 
 ### 重複ファイル管理
 ```
 # 重複ファイルを検出
-tidy-ify find-duplicates [directory] --recursive
+tidyify find-duplicates [directory] --recursive
 
 # 重複ファイルを削除（最初のファイルを保持、残りを削除）
 # インタラクティブモード: 削除前に確認を求めます
-tidy-ify remove-duplicates [directory] --recursive --force
+tidyify remove-duplicates [directory] --recursive --force
 
 # 確認をスキップする場合は --no-confirm オプションを使用
-tidy-ify remove-duplicates [directory] --recursive --force --no-confirm
+tidyify remove-duplicates [directory] --recursive --force --no-confirm
 ```
 
 **注意**: デフォルトでは、`remove-duplicates` コマンドはファイル削除前に [yes/no] で確認を求めます。確認をスキップする場合は `--no-confirm` オプションを使用してください。
@@ -184,12 +184,12 @@ bundle exec rspec
 
 ```bash
 # 英語ファイル名
-ruby -I lib ./exe/tidy-ify setup spec/data/en
-ruby -I lib ./exe/tidy-ify run spec/data/en --recursive
+ruby -I lib ./exe/tidyify setup spec/data/en
+ruby -I lib ./exe/tidyify run spec/data/en --recursive
 
 # 日本語ファイル名
-ruby -I lib ./exe/tidy-ify setup spec/data/ja
-ruby -I lib ./exe/tidy-ify run spec/data/ja --recursive
+ruby -I lib ./exe/tidyify setup spec/data/ja
+ruby -I lib ./exe/tidyify run spec/data/ja --recursive
 ```
 
 ## 技術仕様

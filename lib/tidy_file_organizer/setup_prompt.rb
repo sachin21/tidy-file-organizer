@@ -22,8 +22,8 @@ module TidyFileOrganizer
       puts "  保存先: #{@config_manager.path}"
       puts ''
       puts '次のステップ:'
-      puts "  1. Dry-run でシミュレーション: tidy-ify run #{target_dir}"
-      puts "  2. 実際に整理を実行: tidy-ify run #{target_dir} --force"
+      puts "  1. Dry-run でシミュレーション: tidyify run #{target_dir}"
+      puts "  2. 実際に整理を実行: tidyify run #{target_dir} --force"
     end
 
     private

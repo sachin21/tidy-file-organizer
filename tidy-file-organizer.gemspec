@@ -15,7 +15,7 @@ Gem::Specification.new do |spec|
     `git ls-files -z`.split("\x0").reject { |f| f.match(%r{^(test|spec|features)/}) }
   end
   spec.bindir        = 'exe'
-  spec.executables   = ['tidy-ify']
+  spec.executables   = ['tidyify']
   spec.require_paths = ['lib']
 
   # yamlは標準ライブラリなので依存関係から削除

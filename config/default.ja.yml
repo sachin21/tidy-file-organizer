@@ -1,13 +1,13 @@
-# tidy-file-organizer Default Configuration File (English)
-# This file is copied to ~/.config/tidy-file-organizer/default.yml on gem installation
+# tidy-file-organizer デフォルト設定ファイル（日本語）
+# このファイルは gem インストール時に ~/.config/tidy-file-organizer/default.ja.yml にコピーされます
 #
-# When a directory configuration matches default values, it will reference this file.
-# This avoids duplication and saves disk space.
+# 各ディレクトリの設定がデフォルト値と同じ場合、このファイルを参照します。
+# これにより設定ファイルの重複を避け、ディスク容量を節約します。
 
 ---
-:language: en
+:language: ja
 :extensions:
-  Images:
+  画像:
   - jpg
   - jpeg
   - png
@@ -15,20 +15,20 @@
   - bmp
   - svg
   - webp
-  Videos:
+  動画:
   - mp4
   - mov
   - avi
   - mkv
   - flv
   - wmv
-  Audio:
+  音声:
   - mp3
   - wav
   - flac
   - aac
   - m4a
-  Documents:
+  書類:
   - pdf
   - doc
   - docx
@@ -38,7 +38,7 @@
   - pptx
   - txt
   - md
-  Scripts:
+  スクリプト:
   - rb
   - py
   - js
@@ -48,21 +48,21 @@
   - c
   - go
   - rs
-  Web:
+  ウェブ:
   - html
   - css
   - scss
   - jsx
   - tsx
   - vue
-  Archives:
+  アーカイブ:
   - zip
   - tar
   - gz
   - rar
   - 7z
   - bz2
-  Configs:
+  設定:
   - json
   - yml
   - yaml
@@ -70,23 +70,23 @@
   - xml
   - ini
 :keywords:
-  Screenshots:
+  スクリーンショット:
   - screenshot
   - スクリーンショット
   - スクショ
-  Invoices:
+  請求書:
   - invoice
   - 請求書
   - 見積
-  Minutes:
+  議事録:
   - 議事録
   - minutes
   - meeting
-  Contracts:
+  契約書:
   - 契約
   - contract
   - 同意書
-  Backups:
+  バックアップ:
   - backup
   - バックアップ
   - bak

@@ -13,6 +13,10 @@ module TidyFileOrganizer
 
       config = @config_manager.load || @config_manager.default
 
+      # 言語設定
+      @language = setup_language(config)
+      config[:language] = @language
+
       setup_extensions(config)
       setup_keywords(config)
 
@@ -27,6 +31,33 @@ module TidyFileOrganizer
     end
 
     private
+
+    def setup_language(config)
+      puts '[0] フォルダ名の言語設定'
+      puts '-' * 60
+      puts '説明: 整理先フォルダ名を日本語にするか英語にするか選択します'
+      puts ''
+      puts '  1: English (例: Images, Documents, Screenshots)'
+      puts '  2: 日本語 (例: 画像, 書類, スクリーンショット)'
+      puts ''
+      current = config[:language] || 'en'
+      current_label = current == 'ja' ? '日本語' : 'English'
+      puts "現在の設定: #{current_label}"
+      print "\n選択 (1=English, 2=日本語, Enter=現在の設定のまま): "
+      input = read_input.strip
+
+      case input
+      when '1'
+        'en'
+      when '2'
+        'ja'
+      when ''
+        current
+      else
+        puts "無効な入力です。デフォルト（English）を使用します。"
+        'en'
+      end
+    end
 
     def setup_extensions(config)
       puts '[1] 拡張子による整理ルール'
@@ -75,26 +106,49 @@ module TidyFileOrganizer
     end
 
     def default_extensions
-      {
-        '画像' => %w[jpg jpeg png gif bmp svg webp],
-        '動画' => %w[mp4 mov avi mkv flv wmv],
-        '音声' => %w[mp3 wav flac aac m4a],
-        '書類' => %w[pdf doc docx xls xlsx ppt pptx txt md],
-        'スクリプト' => %w[rb py js ts java cpp c go rs],
-        'ウェブ' => %w[html css scss jsx tsx vue],
-        'アーカイブ' => %w[zip tar gz rar 7z bz2],
-        '設定' => %w[json yml yaml toml xml ini],
-      }
+      if @language == 'en'
+        {
+          'Images' => %w[jpg jpeg png gif bmp svg webp],
+          'Videos' => %w[mp4 mov avi mkv flv wmv],
+          'Audio' => %w[mp3 wav flac aac m4a],
+          'Documents' => %w[pdf doc docx xls xlsx ppt pptx txt md],
+          'Scripts' => %w[rb py js ts java cpp c go rs],
+          'Web' => %w[html css scss jsx tsx vue],
+          'Archives' => %w[zip tar gz rar 7z bz2],
+          'Configs' => %w[json yml yaml toml xml ini],
+        }
+      else
+        {
+          '画像' => %w[jpg jpeg png gif bmp svg webp],
+          '動画' => %w[mp4 mov avi mkv flv wmv],
+          '音声' => %w[mp3 wav flac aac m4a],
+          '書類' => %w[pdf doc docx xls xlsx ppt pptx txt md],
+          'スクリプト' => %w[rb py js ts java cpp c go rs],
+          'ウェブ' => %w[html css scss jsx tsx vue],
+          'アーカイブ' => %w[zip tar gz rar 7z bz2],
+          '設定' => %w[json yml yaml toml xml ini],
+        }
+      end
     end
 
     def default_keywords
-      {
-        'スクリーンショット' => %w[screenshot スクリーンショット スクショ],
-        '請求書' => %w[invoice 請求書 見積],
-        '議事録' => %w[議事録 minutes meeting],
-        '契約書' => %w[契約 contract 同意書],
-        'バックアップ' => %w[backup バックアップ bak],
-      }
+      if @language == 'en'
+        {
+          'Screenshots' => %w[screenshot スクリーンショット スクショ],
+          'Invoices' => %w[invoice 請求書 見積],
+          'Minutes' => %w[議事録 minutes meeting],
+          'Contracts' => %w[契約 contract 同意書],
+          'Backups' => %w[backup バックアップ bak],
+        }
+      else
+        {
+          'スクリーンショット' => %w[screenshot スクリーンショット スクショ],
+          '請求書' => %w[invoice 請求書 見積],
+          '議事録' => %w[議事録 minutes meeting],
+          '契約書' => %w[契約 contract 同意書],
+          'バックアップ' => %w[backup バックアップ bak],
+        }
+      end
     end
 
     def show_default_extensions

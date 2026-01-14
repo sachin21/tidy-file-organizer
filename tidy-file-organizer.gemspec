@@ -17,6 +17,17 @@ Gem::Specification.new do |spec|
   spec.bindir        = 'exe'
   spec.executables   = ['tidyify']
   spec.require_paths = ['lib']
+  
+  # gem install 時にデフォルト設定ファイルを作成
+  spec.post_install_message = <<~MSG
+    tidy-file-organizer をインストールいただきありがとうございます！
+    
+    使い方:
+      tidyify setup ~/Downloads     # 設定を作成
+      tidyify run ~/Downloads        # ファイルを整理
+    
+    詳細: https://github.com/sachin21/tidy-file-organizer
+  MSG
 
   # yamlは標準ライブラリなので依存関係から削除
   spec.add_development_dependency 'rake', '~> 13.0'

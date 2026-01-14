@@ -39,9 +39,15 @@ module TidyFileOrganizer
       show_default_extensions
       puts ''
       puts "現在の設定: #{format_extension_config(config[:extensions])}"
-      print "\n新しい設定を入力 (変更しない場合はEnter): "
+      print "\n新しい設定を入力 (デフォルト値を使う場合はEnter): "
       input = read_input
-      config[:extensions] = parse_rule_input(input) unless input.empty?
+      
+      if input.empty? && config[:extensions].empty?
+        # 空の場合はデフォルト値を設定
+        config[:extensions] = default_extensions
+      elsif !input.empty?
+        config[:extensions] = parse_rule_input(input)
+      end
     end
 
     def setup_keywords(config)
@@ -57,13 +63,19 @@ module TidyFileOrganizer
       show_default_keywords
       puts ''
       puts "現在の設定: #{format_keyword_config(config[:keywords])}"
-      print "\n新しい設定を入力 (変更しない場合はEnter): "
+      print "\n新しい設定を入力 (デフォルト値を使う場合はEnter): "
       input = read_input
-      config[:keywords] = parse_rule_input(input) unless input.empty?
+      
+      if input.empty? && config[:keywords].empty?
+        # 空の場合はデフォルト値を設定
+        config[:keywords] = default_keywords
+      elsif !input.empty?
+        config[:keywords] = parse_rule_input(input)
+      end
     end
 
-    def show_default_extensions
-      defaults = {
+    def default_extensions
+      {
         '画像' => %w[jpg jpeg png gif bmp svg webp],
         '動画' => %w[mp4 mov avi mkv flv wmv],
         '音声' => %w[mp3 wav flac aac m4a],
@@ -73,20 +85,26 @@ module TidyFileOrganizer
         'アーカイブ' => %w[zip tar gz rar 7z bz2],
         '設定' => %w[json yml yaml toml xml ini],
       }
-      defaults.each do |dir, exts|
-        puts "  #{exts.join(',')}:#{dir}"
-      end
     end
 
-    def show_default_keywords
-      defaults = {
+    def default_keywords
+      {
         'スクリーンショット' => %w[screenshot スクリーンショット スクショ],
         '請求書' => %w[invoice 請求書 見積],
         '議事録' => %w[議事録 minutes meeting],
         '契約書' => %w[契約 contract 同意書],
         'バックアップ' => %w[backup バックアップ bak],
       }
-      defaults.each do |dir, keywords|
+    end
+
+    def show_default_extensions
+      default_extensions.each do |dir, exts|
+        puts "  #{exts.join(',')}:#{dir}"
+      end
+    end
+
+    def show_default_keywords
+      default_keywords.each do |dir, keywords|
         puts "  #{keywords.join(',')}:#{dir}"
       end
     end

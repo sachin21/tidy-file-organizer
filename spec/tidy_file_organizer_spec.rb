@@ -24,8 +24,8 @@ RSpec.describe TidyFileOrganizer::Organizer do
   describe '#determine_destination' do
     let(:config) do
       {
-        extensions: { 'images' => ['jpg', 'png'], 'docs' => ['pdf'] },
-        keywords: { 'work' => ['project_a', 'invoice'] }
+        extensions: { 'images' => %w[jpg png], 'docs' => ['pdf'] },
+        keywords: { 'work' => %w[project_a invoice] },
       }
     end
 
@@ -48,7 +48,7 @@ RSpec.describe TidyFileOrganizer::Organizer do
     let(:config) do
       {
         extensions: { 'images' => ['jpg'] },
-        keywords: { 'work' => ['project_a'] }
+        keywords: { 'work' => ['project_a'] },
       }
     end
 

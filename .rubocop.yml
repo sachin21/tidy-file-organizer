@@ -1,93 +1,25 @@
-# This RuboCop configuration is based on Cookpad's Ruby Style Guide
-# Source: https://github.com/cookpad/styleguide
-# License: CC BY 3.0 (https://creativecommons.org/licenses/by/3.0/)
-# 
-# Modifications have been made for this project.
+# This project's RuboCop configuration
+# Inherits from Cookpad's Ruby Style Guide and applies project-specific overrides
 
+inherit_from: .rubocop.cookpad-styleguide.yml
+
+# Additional plugins
 plugins:
-  - rubocop-performance
   - rubocop-rspec
 
-AllCops:
-  TargetRubyVersion: 3.0
-  NewCops: enable
-  Exclude:
-    - 'vendor/**/*'
-    - 'node_modules/**/*'
-    - 'tmp/**/*'
-    - 'spec/data/**/*'
+# Project-specific overrides
 
-# Layout
-
-Layout/LineLength:
+Metrics/ClassLength:
   Max: 120
-  Exclude:
-    - 'spec/**/*'
-
-Layout/MultilineMethodCallIndentation:
-  EnforcedStyle: indented
-
-# Style
-
-Style/StringLiterals:
-  EnforcedStyle: single_quotes
-
-Style/StringLiteralsInInterpolation:
-  EnforcedStyle: single_quotes
-
-Style/Documentation:
-  Enabled: false
-
-Style/FrozenStringLiteralComment:
-  Enabled: false
-
-Style/HashSyntax:
-  EnforcedStyle: ruby19
-
-Style/SymbolArray:
-  EnforcedStyle: brackets
-
-Style/WordArray:
-  EnforcedStyle: brackets
-
-# Metrics
-
-Metrics/BlockLength:
-  Exclude:
-    - 'spec/**/*'
-    - '*.gemspec'
-
-Metrics/MethodLength:
-  Max: 30
-
-Metrics/AbcSize:
-  Max: 30
-
-Metrics/CyclomaticComplexity:
-  Max: 10
-
-Metrics/PerceivedComplexity:
-  Max: 10
-
-# Naming
-
-Naming/FileName:
-  Exclude:
-    - 'Gemfile'
-    - 'Rakefile'
-
-# Performance
-
-Performance/StringReplacement:
-  Enabled: true
-
-# RSpec
-
-RSpec/ExampleLength:
-  Max: 20
 
 RSpec/MultipleExpectations:
-  Max: 5
+  Max: 10
 
-RSpec/NestedGroups:
-  Max: 5
+RSpec/ContextWording:
+  Enabled: false
+
+RSpec/SpecFilePathFormat:
+  Enabled: false
+
+Gemspec/DevelopmentDependencies:
+  Enabled: false

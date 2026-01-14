@@ -5,7 +5,8 @@ Gem::Specification.new do |spec|
   spec.email          = ['sachin21@example.com'] # 適宜変更してください
 
   spec.summary       = 'File organizer based on extensions, names, and keywords.'
-  spec.description   = 'A Ruby gem to organize files in directories based on configurable rules including extensions, keywords, and dates.'
+  spec.description   = 'A Ruby gem to organize files in directories based on configurable rules including ' \
+                       'extensions, keywords, and dates.'
   spec.homepage      = 'https://github.com/sachin21/tidy-file-organizer'
   spec.license       = 'MIT'
   spec.required_ruby_version = '>= 3.0.0'

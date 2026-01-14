@@ -64,14 +64,14 @@ module TidyFileOrganizer
 
     def show_default_extensions
       defaults = {
-        '画像' => ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg', 'webp'],
-        '動画' => ['mp4', 'mov', 'avi', 'mkv', 'flv', 'wmv'],
-        '音声' => ['mp3', 'wav', 'flac', 'aac', 'm4a'],
-        '書類' => ['pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'txt', 'md'],
-        'スクリプト' => ['rb', 'py', 'js', 'ts', 'java', 'cpp', 'c', 'go', 'rs'],
-        'ウェブ' => ['html', 'css', 'scss', 'jsx', 'tsx', 'vue'],
-        'アーカイブ' => ['zip', 'tar', 'gz', 'rar', '7z', 'bz2'],
-        '設定' => ['json', 'yml', 'yaml', 'toml', 'xml', 'ini']
+        '画像' => %w[jpg jpeg png gif bmp svg webp],
+        '動画' => %w[mp4 mov avi mkv flv wmv],
+        '音声' => %w[mp3 wav flac aac m4a],
+        '書類' => %w[pdf doc docx xls xlsx ppt pptx txt md],
+        'スクリプト' => %w[rb py js ts java cpp c go rs],
+        'ウェブ' => %w[html css scss jsx tsx vue],
+        'アーカイブ' => %w[zip tar gz rar 7z bz2],
+        '設定' => %w[json yml yaml toml xml ini],
       }
       defaults.each do |dir, exts|
         puts "  #{exts.join(',')}:#{dir}"
@@ -80,11 +80,11 @@ module TidyFileOrganizer
 
     def show_default_keywords
       defaults = {
-        'スクリーンショット' => ['screenshot', 'スクリーンショット', 'スクショ'],
-        '請求書' => ['invoice', '請求書', '見積'],
-        '議事録' => ['議事録', 'minutes', 'meeting'],
-        '契約書' => ['契約', 'contract', '同意書'],
-        'バックアップ' => ['backup', 'バックアップ', 'bak']
+        'スクリーンショット' => %w[screenshot スクリーンショット スクショ],
+        '請求書' => %w[invoice 請求書 見積],
+        '議事録' => %w[議事録 minutes meeting],
+        '契約書' => %w[契約 contract 同意書],
+        'バックアップ' => %w[backup バックアップ bak],
       }
       defaults.each do |dir, keywords|
         puts "  #{keywords.join(',')}:#{dir}"
@@ -92,8 +92,6 @@ module TidyFileOrganizer
     end
 
     def read_input
-      if $stdin.tty?
-      end
       $stdin.gets.chomp
     end
 

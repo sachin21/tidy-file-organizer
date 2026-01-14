@@ -1,6 +1,6 @@
 module TidyFileOrganizer
   class CLI
-    COMMANDS = ['setup', 'run'].freeze
+    COMMANDS = %w[setup run].freeze
 
     def initialize(args)
       @args = args

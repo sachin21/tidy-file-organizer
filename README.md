@@ -18,7 +18,7 @@ A Ruby-based CLI tool to automatically organize files based on file names, folde
 - 🧪 **Dry-run Mode**: Simulate before actual execution with --dry-run option
 - ⚠️ **Safe Execution**: Duplicate file detection, organized folder exclusion
 - 🧹 **Auto Cleanup**: Automatically remove empty directories
-- 🌏 **Japanese Support**: Full support for Japanese filenames and folder names
+- 🌐 **Internationalization**: Full English/Japanese support based on LANG environment variable
 - ⚙️ **Flexible Configuration**: Save different organization rules per directory
 
 ## Installation
@@ -27,8 +27,10 @@ A Ruby-based CLI tool to automatically organize files based on file names, folde
 
 ```bash
 gem build tidy-file-organizer.gemspec
-gem install ./tidy-file-organizer-0.1.0.gem
+gem install ./tidy-file-organizer-*.gem
 ```
+
+**Note**: Installation messages will be displayed in English or Japanese based on your `LANG` environment variable.
 
 ### Use in Development
 
@@ -110,6 +112,7 @@ tidyify run [directory] -r --dry-run         # Simulate in recursive mode
 ### Date-based Organization
 ```
 # Organize by year (e.g., 2023/, 2024/)
+# If directory is omitted, uses current directory
 tidyify organize-by-date [directory] --pattern=year
 
 # Organize by year-month (e.g., 2023-01/, 2023-06/)
@@ -122,6 +125,7 @@ tidyify organize-by-date [directory] --pattern=year-month-day --dry-run
 ### Duplicate File Management
 ```
 # Find duplicate files
+# If directory is omitted, uses current directory
 tidyify find-duplicates [directory] --recursive
 
 # Remove duplicate files (keeps first file, deletes others)

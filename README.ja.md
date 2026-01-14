@@ -18,7 +18,7 @@
 - 🧪 **Dry-runモード**: --dry-runオプションでシミュレーション実行
 - ⚠️ **安全な実行**: ファイル名重複の検知、整理済みフォルダの除外
 - 🧹 **自動クリーンアップ**: 空になったディレクトリを自動削除
-- 🌏 **日本語対応**: 日本語ファイル名・フォルダ名に完全対応
+- 🌐 **国際化対応**: LANG環境変数に基づいた日本語/英語の完全サポート
 - ⚙️ **柔軟な設定**: ディレクトリごとに異なる整理ルールを保存
 
 ## インストール
@@ -27,8 +27,10 @@
 
 ```bash
 gem build tidy-file-organizer.gemspec
-gem install ./tidy-file-organizer-0.1.0.gem
+gem install ./tidy-file-organizer-*.gem
 ```
+
+**注意**: インストールメッセージは `LANG` 環境変数に基づいて日本語または英語で表示されます。
 
 ### 開発環境で使用
 
@@ -110,6 +112,7 @@ tidyify run [directory] -r --dry-run         # 再帰モードでシミュレー
 ### 日付ベースの整理
 ```
 # 年ごとに整理（例: 2023/, 2024/）
+# directoryを省略した場合、カレントディレクトリを使用します
 tidyify organize-by-date [directory] --pattern=year
 
 # 年月ごとに整理（例: 2023-01/, 2023-06/）
@@ -122,6 +125,7 @@ tidyify organize-by-date [directory] --pattern=year-month-day --dry-run
 ### 重複ファイル管理
 ```
 # 重複ファイルを検出
+# directoryを省略した場合、カレントディレクトリを使用します
 tidyify find-duplicates [directory] --recursive
 
 # 重複ファイルを削除（最初のファイルを保持、残りを削除）

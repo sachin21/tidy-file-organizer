@@ -5,11 +5,18 @@ module TidyFileOrganizer
     def initialize(args)
       @args = args
       @command = args[0]
-      @target_dir = args[1] || '.'
+      @target_dir = args[1]
     end
 
     def run
       unless valid_command?
+        show_usage
+        exit 1
+      end
+
+      unless @target_dir
+        puts 'エラー: 対象ディレクトリを指定してください'
+        puts ''
         show_usage
         exit 1
       end

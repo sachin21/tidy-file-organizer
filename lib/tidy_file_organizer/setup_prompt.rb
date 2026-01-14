@@ -21,15 +21,23 @@ module TidyFileOrganizer
     def setup_extensions(config)
       puts "\n[1] 拡張子ベースの整理設定 (例: jpg,png:images pdf:docs)"
       print "現在の設定: #{format_extension_config(config[:extensions])}\n新しい設定を入力 (スキップはEnter): "
-      input = gets.chomp
+      input = read_input
       config[:extensions] = parse_rule_input(input) unless input.empty?
     end
 
     def setup_keywords(config)
       puts "\n[2] キーワードベースの整理設定 (例: project_a:work billing:invoice)"
       print "現在の設定: #{format_keyword_config(config[:keywords])}\n新しい設定を入力 (スキップはEnter): "
-      input = gets.chomp
+      input = read_input
       config[:keywords] = parse_rule_input(input) unless input.empty?
+    end
+
+    def read_input
+      if $stdin.tty?
+        $stdin.gets.chomp
+      else
+        STDIN.gets.chomp
+      end
     end
 
     def format_extension_config(exts)

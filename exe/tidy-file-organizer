@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
 
-require "tidy_file_organizer"
+require 'tidy_file_organizer'
 
 TidyFileOrganizer::CLI.new(ARGV).run

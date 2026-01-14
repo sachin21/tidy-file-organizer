@@ -32,16 +32,14 @@ module TidyFileOrganizer
       files = collect_files(recursive: recursive)
 
       if files.empty?
-        puts "整理対象のファイルが見つかりませんでした。"
+        puts '整理対象のファイルが見つかりませんでした。'
         return
       end
 
       organize_files(files, config, dry_run)
 
       # 空ディレクトリのクリーンアップ
-      if recursive && !dry_run
-        cleanup_empty_directories
-      end
+      cleanup_empty_directories if recursive && !dry_run
 
       puts "\n整理が完了しました。"
     end
@@ -53,8 +51,8 @@ module TidyFileOrganizer
         collect_files_recursively(@target_dir)
       else
         Dir.children(@target_dir)
-           .map { |entry| File.join(@target_dir, entry) }
-           .select { |path| File.file?(path) }
+          .map { |entry| File.join(@target_dir, entry) }
+          .select { |path| File.file?(path) }
       end
     end
 
@@ -63,7 +61,7 @@ module TidyFileOrganizer
       Dir.children(dir).each do |entry|
         # 整理先ディレクトリはスキップ
         next if @organized_dirs.include?(entry)
-        
+
         path = File.join(dir, entry)
         if File.file?(path)
           files << path
@@ -111,7 +109,7 @@ module TidyFileOrganizer
 
     def move_file(file_path, dest_dir_name, dry_run:)
       filename = File.basename(file_path)
-      relative_path = file_path.sub(@target_dir + '/', '')
+      relative_path = file_path.sub("#{@target_dir}/", '')
       dest_dir = File.join(@target_dir, dest_dir_name)
       dest_path = File.join(dest_dir, filename)
 
@@ -131,23 +129,23 @@ module TidyFileOrganizer
       if dry_run
         puts "[Dry-run] #{relative_path} -> #{dest_dir_name}/"
       else
-        FileUtils.mkdir_p(dest_dir) unless Dir.exist?(dest_dir)
+        FileUtils.mkdir_p(dest_dir)
         FileUtils.mv(file_path, dest_path)
         puts "Moved: #{relative_path} -> #{dest_dir_name}/"
       end
     end
 
     def cleanup_empty_directories
-      Dir.glob(File.join(@target_dir, '**/*')).sort.reverse.each do |path|
+      Dir.glob(File.join(@target_dir, '**/*')).reverse_each do |path|
         next unless File.directory?(path)
         next if path == @target_dir
         next if @organized_dirs.include?(File.basename(path))
-        
-        if Dir.empty?(path)
-          Dir.rmdir(path)
-          relative_path = path.sub(@target_dir + '/', '')
-          puts "Cleaned up: #{relative_path}/ (空ディレクトリを削除)"
-        end
+
+        next unless Dir.empty?(path)
+
+        Dir.rmdir(path)
+        relative_path = path.sub("#{@target_dir}/", '')
+        puts "Cleaned up: #{relative_path}/ (空ディレクトリを削除)"
       end
     end
   end

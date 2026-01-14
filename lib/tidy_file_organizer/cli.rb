@@ -1,11 +1,11 @@
 module TidyFileOrganizer
   class CLI
-    COMMANDS = %w[setup run].freeze
+    COMMANDS = ['setup', 'run'].freeze
 
     def initialize(args)
       @args = args
       @command = args[0]
-      @target_dir = args[1] || "."
+      @target_dir = args[1] || '.'
     end
 
     def run
@@ -17,11 +17,11 @@ module TidyFileOrganizer
       organizer = Organizer.new(@target_dir)
 
       case @command
-      when "setup"
+      when 'setup'
         organizer.setup
-      when "run"
-        dry_run = !@args.include?("--force")
-        recursive = @args.include?("--recursive") || @args.include?("-r")
+      when 'run'
+        dry_run = !@args.include?('--force')
+        recursive = @args.include?('--recursive') || @args.include?('-r')
         organizer.run(dry_run: dry_run, recursive: recursive)
       end
     end
@@ -33,14 +33,14 @@ module TidyFileOrganizer
     end
 
     def show_usage
-      puts "Usage: tidy-file-organizer [setup|run] [target_directory] [options]"
+      puts 'Usage: tidy-file-organizer [setup|run] [target_directory] [options]'
       puts "\nCommands:"
-      puts "  setup    整理ルールをインタラクティブに設定します"
-      puts "  run      設定に基づいてファイルを整理します"
+      puts '  setup    整理ルールをインタラクティブに設定します'
+      puts '  run      設定に基づいてファイルを整理します'
       puts "\nOptions:"
-      puts "  --force       Dry-runを無効にして実際にファイルを移動します"
-      puts "  --recursive   サブディレクトリ内のファイルも再帰的に整理します"
-      puts "  -r            --recursive の短縮形"
+      puts '  --force       Dry-runを無効にして実際にファイルを移動します'
+      puts '  --recursive   サブディレクトリ内のファイルも再帰的に整理します'
+      puts '  -r            --recursive の短縮形'
     end
   end
 end

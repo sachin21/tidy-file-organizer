@@ -5,11 +5,11 @@ module TidyFileOrganizer
     end
 
     def run(target_dir)
-      puts "=" * 60
-      puts "  tidy-file-organizer セットアップ"
-      puts "=" * 60
+      puts '=' * 60
+      puts '  tidy-file-organizer セットアップ'
+      puts '=' * 60
       puts "対象ディレクトリ: #{target_dir}"
-      puts ""
+      puts ''
 
       config = @config_manager.load || @config_manager.default
 
@@ -17,11 +17,11 @@ module TidyFileOrganizer
       setup_keywords(config)
 
       @config_manager.save(config)
-      puts ""
-      puts "✓ 設定を保存しました"
+      puts ''
+      puts '✓ 設定を保存しました'
       puts "  保存先: #{@config_manager.path}"
-      puts ""
-      puts "次のステップ:"
+      puts ''
+      puts '次のステップ:'
       puts "  1. Dry-run でシミュレーション: tidy-file-organizer run #{target_dir}"
       puts "  2. 実際に整理を実行: tidy-file-organizer run #{target_dir} --force"
     end
@@ -29,15 +29,15 @@ module TidyFileOrganizer
     private
 
     def setup_extensions(config)
-      puts "[1] 拡張子による整理ルール"
-      puts "-" * 60
-      puts "説明: ファイルの拡張子に基づいて整理先フォルダを指定します"
-      puts ""
-      puts "入力形式: 拡張子リスト:フォルダ名 拡張子リスト:フォルダ名 ..."
-      puts ""
-      puts "デフォルト値:"
+      puts '[1] 拡張子による整理ルール'
+      puts '-' * 60
+      puts '説明: ファイルの拡張子に基づいて整理先フォルダを指定します'
+      puts ''
+      puts '入力形式: 拡張子リスト:フォルダ名 拡張子リスト:フォルダ名 ...'
+      puts ''
+      puts 'デフォルト値:'
       show_default_extensions
-      puts ""
+      puts ''
       puts "現在の設定: #{format_extension_config(config[:extensions])}"
       print "\n新しい設定を入力 (変更しない場合はEnter): "
       input = read_input
@@ -45,17 +45,17 @@ module TidyFileOrganizer
     end
 
     def setup_keywords(config)
-      puts ""
-      puts "[2] キーワードによる整理ルール"
-      puts "-" * 60
-      puts "説明: ファイル名に含まれるキーワードで整理先フォルダを指定します"
-      puts "      ※キーワードは拡張子より優先されます"
-      puts ""
-      puts "入力形式: キーワードリスト:フォルダ名 キーワードリスト:フォルダ名 ..."
-      puts ""
-      puts "デフォルト値:"
+      puts ''
+      puts '[2] キーワードによる整理ルール'
+      puts '-' * 60
+      puts '説明: ファイル名に含まれるキーワードで整理先フォルダを指定します'
+      puts '      ※キーワードは拡張子より優先されます'
+      puts ''
+      puts '入力形式: キーワードリスト:フォルダ名 キーワードリスト:フォルダ名 ...'
+      puts ''
+      puts 'デフォルト値:'
       show_default_keywords
-      puts ""
+      puts ''
       puts "現在の設定: #{format_keyword_config(config[:keywords])}"
       print "\n新しい設定を入力 (変更しない場合はEnter): "
       input = read_input
@@ -93,20 +93,20 @@ module TidyFileOrganizer
 
     def read_input
       if $stdin.tty?
-        $stdin.gets.chomp
-      else
-        STDIN.gets.chomp
       end
+      $stdin.gets.chomp
     end
 
     def format_extension_config(exts)
-      return "なし" if exts.empty?
-      exts.map { |dir, extensions| "#{extensions.join(',')}:#{dir}" }.join(" ")
+      return 'なし' if exts.empty?
+
+      exts.map { |dir, extensions| "#{extensions.join(',')}:#{dir}" }.join(' ')
     end
 
     def format_keyword_config(kws)
-      return "なし" if kws.empty?
-      kws.map { |dir, keywords| "#{keywords.join(',')}:#{dir}" }.join(" ")
+      return 'なし' if kws.empty?
+
+      kws.map { |dir, keywords| "#{keywords.join(',')}:#{dir}" }.join(' ')
     end
 
     def parse_rule_input(input)
@@ -114,6 +114,7 @@ module TidyFileOrganizer
       input.split(/\s+/).each do |part|
         items, dir = part.split(':')
         next unless items && dir
+
         result[dir] = items.split(',')
       end
       result

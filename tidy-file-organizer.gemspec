@@ -18,15 +18,26 @@ Gem::Specification.new do |spec|
   spec.executables   = ['tidyify']
   spec.require_paths = ['lib']
 
-  spec.post_install_message = <<~MSG
-    使い方:
-      tidyify setup ~/Downloads     # 設定を作成
-      tidyify run ~/Downloads        # ファイルを整理
+  # Post-install message (language based on LANG environment variable)
+  lang = ENV['LANG'].to_s
+  spec.post_install_message = if lang.start_with?('ja')
+                                <<~MSG
+                                   使い方:
+                                     tidyify setup ~/Downloads     # 設定を作成
+                                     tidyify run ~/Downloads        # ファイルを整理
 
-    詳細: https://github.com/sachin21/tidy-file-organizer
-  MSG
+                                   詳細: https://github.com/sachin21/tidy-file-organizer
+                                 MSG
+                               else
+                                 <<~MSG
+                                   Usage:
+                                     tidyify setup ~/Downloads     # Create configuration
+                                     tidyify run ~/Downloads        # Organize files
 
-  # yamlは標準ライブラリなので依存関係から削除
+                                   Details: https://github.com/sachin21/tidy-file-organizer
+                                 MSG
+                               end
+
   spec.add_development_dependency 'rake', '~> 13.0'
   spec.add_development_dependency 'rspec', '~> 3.0'
   spec.add_development_dependency 'rubocop', '~> 1.0'

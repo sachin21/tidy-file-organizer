@@ -1,0 +1,23 @@
+#!/usr/bin/env ruby
+
+require "tidy_file_organizer"
+
+def usage
+  puts "Usage: tidy-file-organizer [setup|run] [target_directory]"
+  exit 1
+end
+
+command = ARGV[0]
+target_dir = ARGV[1] || "."
+
+usage unless ["setup", "run"].include?(command)
+
+organizer = TidyFileOrganizer::Organizer.new(target_dir)
+
+case command
+when "setup"
+  organizer.setup
+when "run"
+  puts "整理実行機能は現在実装中です..."
+  # organizer.run
+end

@@ -20,7 +20,7 @@ module TidyFileOrganizer
       return nil unless File.exist?(@config_path)
 
       config = YAML.load_file(@config_path)
-      
+
       # If it's a reference to default config, load the default config
       if config.is_a?(Hash) && config[:use_default]
         language = config[:language] || 'en'
@@ -89,9 +89,9 @@ module TidyFileOrganizer
       reference_config = {
         use_default: true,
         language: language,
-        target_directory: @target_dir
+        target_directory: @target_dir,
       }
-      
+
       content = <<~HEADER
         # tidy-file-organizer configuration file (using default config)
         # Target directory: #{@target_dir}
@@ -101,7 +101,7 @@ module TidyFileOrganizer
         # To customize, re-run 'tidyify setup'.
 
       HEADER
-      
+
       File.write(@config_path, content + reference_config.to_yaml)
     end
 

@@ -12,12 +12,12 @@ module TidyFileOrganizer
       def t(key, **options)
         translations = locale == :ja ? TRANSLATIONS_JA : TRANSLATIONS_EN
         text = translations.dig(*key.to_s.split('.')) || key.to_s
-        
+
         # Variable substitution
         options.each do |k, v|
           text = text.gsub("%{#{k}}", v.to_s)
         end
-        
+
         text
       end
 

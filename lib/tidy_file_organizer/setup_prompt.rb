@@ -73,7 +73,7 @@ module TidyFileOrganizer
       puts I18n.t('setup.current_config', config: format_extension_config(config[:extensions]))
       print "\n#{I18n.t('setup.new_config_prompt')}"
       input = read_input
-      
+
       if input.empty? && config[:extensions].empty?
         # Use default values if empty
         config[:extensions] = default_extensions
@@ -97,7 +97,7 @@ module TidyFileOrganizer
       puts I18n.t('setup.current_config', config: format_keyword_config(config[:keywords]))
       print "\n#{I18n.t('setup.new_config_prompt')}"
       input = read_input
-      
+
       if input.empty? && config[:keywords].empty?
         # Use default values if empty
         config[:keywords] = default_keywords

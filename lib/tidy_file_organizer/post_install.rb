@@ -9,7 +9,7 @@ module TidyFileOrganizer
 
     def self.run
       FileUtils.mkdir_p(CONFIG_DIR)
-      
+
       # 英語版（デフォルト）
       source = File.expand_path('../../config/default.yml', __dir__)
       unless File.exist?(DEFAULT_CONFIG_PATH)

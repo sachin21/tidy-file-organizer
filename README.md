@@ -172,6 +172,10 @@ ruby -I lib ./exe/tidy-file-organizer run spec/data/ja --recursive
 
 MIT License
 
+## Acknowledgments
+
+This project uses [Cookpad's Ruby Style Guide](https://github.com/cookpad/styleguide) for RuboCop configuration, which is licensed under [CC BY 3.0](https://creativecommons.org/licenses/by/3.0/).
+
 ## Author
 
 sachin21

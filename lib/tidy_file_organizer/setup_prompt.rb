@@ -34,7 +34,9 @@ module TidyFileOrganizer
       puts "説明: ファイルの拡張子に基づいて整理先フォルダを指定します"
       puts ""
       puts "入力形式: 拡張子リスト:フォルダ名 拡張子リスト:フォルダ名 ..."
-      puts "例: jpg,png,gif:画像 pdf,docx:書類 rb,py,js:コード"
+      puts ""
+      puts "デフォルト値:"
+      show_default_extensions
       puts ""
       puts "現在の設定: #{format_extension_config(config[:extensions])}"
       print "\n新しい設定を入力 (変更しない場合はEnter): "
@@ -50,12 +52,43 @@ module TidyFileOrganizer
       puts "      ※キーワードは拡張子より優先されます"
       puts ""
       puts "入力形式: キーワードリスト:フォルダ名 キーワードリスト:フォルダ名 ..."
-      puts "例: スクリーンショット:スクショ 請求書:経理 議事録:会議"
+      puts ""
+      puts "デフォルト値:"
+      show_default_keywords
       puts ""
       puts "現在の設定: #{format_keyword_config(config[:keywords])}"
       print "\n新しい設定を入力 (変更しない場合はEnter): "
       input = read_input
       config[:keywords] = parse_rule_input(input) unless input.empty?
+    end
+
+    def show_default_extensions
+      defaults = {
+        '画像' => ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg', 'webp'],
+        '動画' => ['mp4', 'mov', 'avi', 'mkv', 'flv', 'wmv'],
+        '音声' => ['mp3', 'wav', 'flac', 'aac', 'm4a'],
+        '書類' => ['pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'txt', 'md'],
+        'スクリプト' => ['rb', 'py', 'js', 'ts', 'java', 'cpp', 'c', 'go', 'rs'],
+        'ウェブ' => ['html', 'css', 'scss', 'jsx', 'tsx', 'vue'],
+        'アーカイブ' => ['zip', 'tar', 'gz', 'rar', '7z', 'bz2'],
+        '設定' => ['json', 'yml', 'yaml', 'toml', 'xml', 'ini']
+      }
+      defaults.each do |dir, exts|
+        puts "  #{exts.join(',')}:#{dir}"
+      end
+    end
+
+    def show_default_keywords
+      defaults = {
+        'スクリーンショット' => ['screenshot', 'スクリーンショット', 'スクショ'],
+        '請求書' => ['invoice', '請求書', '見積'],
+        '議事録' => ['議事録', 'minutes', 'meeting'],
+        '契約書' => ['契約', 'contract', '同意書'],
+        'バックアップ' => ['backup', 'バックアップ', 'bak']
+      }
+      defaults.each do |dir, keywords|
+        puts "  #{keywords.join(',')}:#{dir}"
+      end
     end
 
     def read_input

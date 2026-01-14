@@ -109,25 +109,35 @@ module TidyFileOrganizer
     def default_extensions
       if @language == 'en'
         {
-          'Images' => %w[jpg jpeg png gif bmp svg webp],
-          'Videos' => %w[mp4 mov avi mkv flv wmv],
-          'Audio' => %w[mp3 wav flac aac m4a],
+          'Images' => %w[jpg jpeg png gif bmp svg webp heic heif tiff tif avif ico raw cr2 nef],
+          'Videos' => %w[mp4 mov avi mkv flv wmv webm m4v 3gp ogv],
+          'Audio' => %w[mp3 wav flac aac m4a ogg opus wma midi mid],
           'Documents' => %w[pdf doc docx xls xlsx ppt pptx txt md],
-          'Scripts' => %w[rb py js ts java cpp c go rs],
+          'Scripts' => %w[rb py js ts java cpp c go rs sh bash zsh fish ps1 r swift kt scala clj lua],
           'Web' => %w[html css scss jsx tsx vue],
           'Archives' => %w[zip tar gz rar 7z bz2],
           'Configs' => %w[json yml yaml toml xml ini],
+          'Databases' => %w[db sqlite sqlite3 sql mdb accdb],
+          'Fonts' => %w[ttf otf woff woff2 eot],
+          'eBooks' => %w[epub mobi azw azw3 fb2],
+          'Logs' => %w[log out err],
+          'Data' => %w[csv tsv parquet arrow],
         }
       else
         {
-          '画像' => %w[jpg jpeg png gif bmp svg webp],
-          '動画' => %w[mp4 mov avi mkv flv wmv],
-          '音声' => %w[mp3 wav flac aac m4a],
+          '画像' => %w[jpg jpeg png gif bmp svg webp heic heif tiff tif avif ico raw cr2 nef],
+          '動画' => %w[mp4 mov avi mkv flv wmv webm m4v 3gp ogv],
+          '音声' => %w[mp3 wav flac aac m4a ogg opus wma midi mid],
           '書類' => %w[pdf doc docx xls xlsx ppt pptx txt md],
-          'スクリプト' => %w[rb py js ts java cpp c go rs],
+          'スクリプト' => %w[rb py js ts java cpp c go rs sh bash zsh fish ps1 r swift kt scala clj lua],
           'ウェブ' => %w[html css scss jsx tsx vue],
           'アーカイブ' => %w[zip tar gz rar 7z bz2],
           '設定' => %w[json yml yaml toml xml ini],
+          'データベース' => %w[db sqlite sqlite3 sql mdb accdb],
+          'フォント' => %w[ttf otf woff woff2 eot],
+          '電子書籍' => %w[epub mobi azw azw3 fb2],
+          'ログ' => %w[log out err],
+          'データ' => %w[csv tsv parquet arrow],
         }
       end
     end
@@ -140,6 +150,13 @@ module TidyFileOrganizer
           'Minutes' => %w[議事録 minutes meeting],
           'Contracts' => %w[契約 contract 同意書],
           'Backups' => %w[backup バックアップ bak],
+          'Receipts' => %w[receipt 領収書 レシート],
+          'Reports' => %w[report 報告書 レポート 報告],
+          'Proposals' => %w[proposal 提案書 提案 企画書],
+          'Presentations' => %w[presentation slide deck プレゼン 資料 スライド],
+          'Templates' => %w[template テンプレート sample サンプル boilerplate],
+          'Drafts' => %w[draft 草案 下書き wip temp tmp],
+          'Notes' => %w[note memo メモ ノート 覚書],
         }
       else
         {
@@ -148,6 +165,13 @@ module TidyFileOrganizer
           '議事録' => %w[議事録 minutes meeting],
           '契約書' => %w[契約 contract 同意書],
           'バックアップ' => %w[backup バックアップ bak],
+          '領収書' => %w[receipt 領収書 レシート],
+          '報告書' => %w[report 報告書 レポート 報告],
+          '提案書' => %w[proposal 提案書 提案 企画書],
+          'プレゼン資料' => %w[presentation slide deck プレゼン 資料 スライド],
+          'テンプレート' => %w[template テンプレート sample サンプル boilerplate],
+          '下書き' => %w[draft 草案 下書き wip temp tmp],
+          'メモ' => %w[note memo メモ ノート 覚書],
         }
       end
     end

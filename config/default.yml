@@ -15,6 +15,15 @@
   - bmp
   - svg
   - webp
+  - heic
+  - heif
+  - tiff
+  - tif
+  - avif
+  - ico
+  - raw
+  - cr2
+  - nef
   Videos:
   - mp4
   - mov
@@ -22,12 +31,21 @@
   - mkv
   - flv
   - wmv
+  - webm
+  - m4v
+  - 3gp
+  - ogv
   Audio:
   - mp3
   - wav
   - flac
   - aac
   - m4a
+  - ogg
+  - opus
+  - wma
+  - midi
+  - mid
   Documents:
   - pdf
   - doc
@@ -48,6 +66,17 @@
   - c
   - go
   - rs
+  - sh
+  - bash
+  - zsh
+  - fish
+  - ps1
+  - r
+  - swift
+  - kt
+  - scala
+  - clj
+  - lua
   Web:
   - html
   - css
@@ -69,6 +98,34 @@
   - toml
   - xml
   - ini
+  Databases:
+  - db
+  - sqlite
+  - sqlite3
+  - sql
+  - mdb
+  - accdb
+  Fonts:
+  - ttf
+  - otf
+  - woff
+  - woff2
+  - eot
+  eBooks:
+  - epub
+  - mobi
+  - azw
+  - azw3
+  - fb2
+  Logs:
+  - log
+  - out
+  - err
+  Data:
+  - csv
+  - tsv
+  - parquet
+  - arrow
 :keywords:
   Screenshots:
   - screenshot
@@ -90,3 +147,58 @@
   - backup
   - バックアップ
   - bak
+  Receipts:
+  - receipt
+  - 領収書
+  - レシート
+  Reports:
+  - report
+  - 報告書
+  - レポート
+  - 報告
+  Proposals:
+  - proposal
+  - 提案書
+  - 提案
+  - 企画書
+  Presentations:
+  - presentation
+  - slide
+  - deck
+  - プレゼン
+  - 資料
+  - スライド
+  Templates:
+  - template
+  - テンプレート
+  - sample
+  - サンプル
+  - boilerplate
+  Drafts:
+  - draft
+  - 草案
+  - 下書き
+  - wip
+  - temp
+  - tmp
+  Notes:
+  - note
+  - memo
+  - メモ
+  - ノート
+  - 覚書
+:patterns:
+  ByDate:
+  - pattern: '\d{4}-\d{2}-\d{2}'
+    description: 'Date format: 2024-01-15'
+  - pattern: '\d{4}_\d{2}_\d{2}'
+    description: 'Date format: 2024_01_15'
+  - pattern: '\d{8}'
+    description: 'Date format: 20240115'
+  Versions:
+  - pattern: 'v\d+\.\d+\.\d+'
+    description: 'Semantic version: v1.0.0'
+  - pattern: '_v\d+'
+    description: 'Version suffix: file_v2'
+  - pattern: '_(final|rev\d+)'
+    description: 'Final or revision: file_final, file_rev3'

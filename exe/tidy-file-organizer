@@ -3,7 +3,9 @@
 require "tidy_file_organizer"
 
 def usage
-  puts "Usage: tidy-file-organizer [setup|run] [target_directory]"
+  puts "Usage: tidy-file-organizer [setup|run] [target_directory] [options]"
+  puts "\nOptions:"
+  puts "  --force    Dry-runを無効にして実際にファイルを移動します"
   exit 1
 end
 
@@ -18,6 +20,6 @@ case command
 when "setup"
   organizer.setup
 when "run"
-  puts "整理実行機能は現在実装中です..."
-  # organizer.run
+  dry_run = !ARGV.include?("--force")
+  organizer.run(dry_run: dry_run)
 end

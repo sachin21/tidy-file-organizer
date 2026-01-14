@@ -14,7 +14,7 @@ module TidyFileOrganizer
 
   def setup
     puts "--- #{@target_dir} の整理設定 ---"
-    
+
     config = load_config || default_config
 
     # 拡張子ベースの設定
@@ -35,7 +35,67 @@ module TidyFileOrganizer
 
   private
 
-  def load_config
+    def run(dry_run: true)
+      config = load_config
+      unless config
+        puts "設定が見つかりません。先に 'setup' コマンドを実行してください。"
+        return
+      end
+
+      puts "--- 整理を開始します (#{@target_dir}) #{dry_run ? '[Dry-run モード]' : ''} ---"
+
+      entries = Dir.children(@target_dir).map { |e| File.join(@target_dir, e) }
+      files = entries.select { |e| File.file?(e) }
+
+      if files.empty?
+        puts "整理対象のファイルが見つかりませんでした。"
+        return
+      end
+
+      files.each do |file_path|
+        destination_dir = determine_destination(file_path, config)
+        next unless destination_dir
+
+        move_file(file_path, destination_dir, dry_run: dry_run)
+      end
+
+      puts "\n整理が完了しました。"
+    end
+
+    private
+
+    def determine_destination(file_path, config)
+      filename = File.basename(file_path)
+      extension = File.extname(file_path).delete('.').downcase
+
+      # 1. キーワードベースの判定 (優先)
+      config[:keywords].each do |dir, keywords|
+        return dir if keywords.any? { |kw| filename.include?(kw) }
+      end
+
+      # 2. 拡張子ベースの判定
+      config[:extensions].each do |dir, extensions|
+        return dir if extensions.include?(extension)
+      end
+
+      nil
+    end
+
+    def move_file(file_path, dest_dir_name, dry_run:)
+      filename = File.basename(file_path)
+      dest_dir = File.join(@target_dir, dest_dir_name)
+      dest_path = File.join(dest_dir, filename)
+
+      if dry_run
+        puts "[Dry-run] #{filename} -> #{dest_dir_name}/"
+      else
+        FileUtils.mkdir_p(dest_dir) unless Dir.exist?(dest_dir)
+        FileUtils.mv(file_path, dest_path)
+        puts "Moved: #{filename} -> #{dest_dir_name}/"
+      end
+    end
+
+    def load_config
     return nil unless File.exist?(@config_path)
     YAML.load_file(@config_path)
   rescue

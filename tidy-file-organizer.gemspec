@@ -8,6 +8,7 @@ Gem::Specification.new do |spec|
   spec.description   = "A Ruby gem to organize files in directories based on configurable rules including extensions, keywords, and dates."
   spec.homepage      = "https://github.com/sachin21/tidy-file-organizer"
   spec.license       = "MIT"
+  spec.required_ruby_version = ">= 3.0.0"
 
   spec.files         = Dir.chdir(File.expand_path('..', __FILE__)) do
     `git ls-files -z`.split("\x0").reject { |f| f.match(%r{^(test|spec|features)/}) }
@@ -16,7 +17,7 @@ Gem::Specification.new do |spec|
   spec.executables   = ["tidy-file-organizer"]
   spec.require_paths = ["lib"]
 
-  spec.add_dependency "yaml"
+  # yamlは標準ライブラリなので依存関係から削除
   spec.add_development_dependency "bundler", "~> 2.0"
   spec.add_development_dependency "rake", "~> 13.0"
   spec.add_development_dependency "rspec", "~> 3.0"

@@ -22,7 +22,8 @@ module TidyFileOrganizer
     end
 
     def save(config)
-      File.write(@config_path, config.to_yaml)
+      content = generate_config_content(config)
+      File.write(@config_path, content)
     end
 
     def default
@@ -31,6 +32,22 @@ module TidyFileOrganizer
 
     def path
       @config_path
+    end
+
+    private
+
+    def generate_config_content(config)
+      header = <<~HEADER
+        # tidy-file-organizer 設定ファイル
+        # Target directory: #{@target_dir}
+        # Configuration file: #{@config_path}
+        #
+        # このファイルを直接編集することもできます。
+        # 再度 'tidyify setup' を実行すると上書きされます。
+
+      HEADER
+
+      header + config.to_yaml
     end
   end
 end

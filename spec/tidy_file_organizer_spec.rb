@@ -29,21 +29,21 @@ RSpec.describe TidyFileOrganizer::Organizer do
       }
     end
 
-    it '拡張子に基づいて正しいディレクトリを返す' do
+    it 'returns correct directory based on extension' do
       expect(organizer.send(:determine_destination, 'test.jpg', config)).to eq('images')
       expect(organizer.send(:determine_destination, 'doc.pdf', config)).to eq('docs')
     end
 
-    it 'キーワードに基づいて正しいディレクトリを返す' do
+    it 'returns correct directory based on keyword' do
       expect(organizer.send(:determine_destination, 'project_a_specification.txt', config)).to eq('work')
-      expect(organizer.send(:determine_destination, 'my_invoice.png', config)).to eq('work') # キーワード優先
+      expect(organizer.send(:determine_destination, 'my_invoice.png', config)).to eq('work') # keyword takes priority
     end
 
-    it '一致するものがない場合はnilを返す' do
+    it 'returns nil when no match is found' do
       expect(organizer.send(:determine_destination, 'unknown.txt', config)).to be_nil
     end
 
-    context 'パターンマッチングを使用する場合' do
+    context 'when using pattern matching' do
       let(:config_with_patterns) do
         {
           extensions: { 'images' => %w[jpg png], 'docs' => ['pdf'] },
@@ -61,28 +61,28 @@ RSpec.describe TidyFileOrganizer::Organizer do
         }
       end
 
-      it 'パターンに基づいて正しいディレクトリを返す（日付形式）' do
+      it 'returns correct directory based on pattern (date format)' do
         expect(organizer.send(:determine_destination, 'report_2024-01-15.pdf', config_with_patterns)).to eq('ByDate')
         expect(organizer.send(:determine_destination, 'file_20240115.txt', config_with_patterns)).to eq('ByDate')
       end
 
-      it 'パターンに基づいて正しいディレクトリを返す（バージョン）' do
+      it 'returns correct directory based on pattern (version format)' do
         expect(organizer.send(:determine_destination, 'app_v1.0.0.zip', config_with_patterns)).to eq('Versions')
         expect(organizer.send(:determine_destination, 'document_v2.pdf', config_with_patterns)).to eq('Versions')
       end
 
-      it 'パターンマッチングはキーワードより優先される' do
-        # パターンにマッチする場合、キーワードよりもパターンが優先される
+      it 'prioritizes pattern matching over keywords' do
+        # When pattern matches, it takes priority over keywords
         expect(organizer.send(:determine_destination, 'invoice_2024-01-15.pdf', config_with_patterns)).to eq('ByDate')
       end
 
-      it 'パターンマッチングに失敗した場合はキーワードや拡張子にフォールバックする' do
+      it 'falls back to keywords and extensions when pattern matching fails' do
         expect(organizer.send(:determine_destination, 'invoice.pdf', config_with_patterns)).to eq('work')
         expect(organizer.send(:determine_destination, 'photo.jpg', config_with_patterns)).to eq('images')
       end
     end
 
-    context '新しいカテゴリ（Phase 1）のテスト' do
+    context 'with Phase 1 new categories' do
       let(:config_with_new_categories) do
         {
           extensions: {
@@ -100,32 +100,32 @@ RSpec.describe TidyFileOrganizer::Organizer do
         }
       end
 
-      it 'データベースファイルを正しく分類する' do
+      it 'correctly classifies database files' do
         expect(organizer.send(:determine_destination, 'app.db', config_with_new_categories)).to eq('Databases')
         expect(organizer.send(:determine_destination, 'data.sqlite3', config_with_new_categories)).to eq('Databases')
       end
 
-      it 'フォントファイルを正しく分類する' do
+      it 'correctly classifies font files' do
         expect(organizer.send(:determine_destination, 'font.ttf', config_with_new_categories)).to eq('Fonts')
         expect(organizer.send(:determine_destination, 'style.woff2', config_with_new_categories)).to eq('Fonts')
       end
 
-      it '電子書籍ファイルを正しく分類する' do
+      it 'correctly classifies ebook files' do
         expect(organizer.send(:determine_destination, 'book.epub', config_with_new_categories)).to eq('eBooks')
         expect(organizer.send(:determine_destination, 'novel.mobi', config_with_new_categories)).to eq('eBooks')
       end
 
-      it 'ログファイルを正しく分類する' do
+      it 'correctly classifies log files' do
         expect(organizer.send(:determine_destination, 'app.log', config_with_new_categories)).to eq('Logs')
         expect(organizer.send(:determine_destination, 'error.err', config_with_new_categories)).to eq('Logs')
       end
 
-      it 'データファイルを正しく分類する' do
+      it 'correctly classifies data files' do
         expect(organizer.send(:determine_destination, 'data.csv', config_with_new_categories)).to eq('Data')
         expect(organizer.send(:determine_destination, 'export.parquet', config_with_new_categories)).to eq('Data')
       end
 
-      it '新しいキーワードで正しく分類する' do
+      it 'correctly classifies files with new keywords' do
         expect(organizer.send(:determine_destination, 'receipt_jan.pdf', config_with_new_categories)).to eq('Receipts')
         expect(organizer.send(:determine_destination, 'report_q1.docx', config_with_new_categories)).to eq('Reports')
         expect(organizer.send(:determine_destination, 'template_email.txt', config_with_new_categories)).to eq('Templates')
@@ -151,27 +151,27 @@ RSpec.describe TidyFileOrganizer::Organizer do
       FileUtils.touch(File.join(tmp_dir, 'other.txt'))
     end
 
-    context 'Dry-run モードの場合' do
-      it 'ファイルは移動されない' do
+    context 'in dry-run mode' do
+      it 'does not move files' do
         expect { organizer.run(dry_run: true) }.to output(/\[Dry-run\]/).to_stdout
         expect(File.exist?(File.join(tmp_dir, 'test.jpg'))).to be true
         expect(Dir.exist?(File.join(tmp_dir, 'images'))).to be false
       end
     end
 
-    context 'Force モード（実際に移動）の場合' do
-      it 'ファイルが正しいディレクトリに移動される' do
+    context 'in force mode (actual move)' do
+      it 'moves files to correct directories' do
         expect { organizer.run(dry_run: false) }.to output(/Moved:/).to_stdout
 
         expect(File.exist?(File.join(tmp_dir, 'images', 'test.jpg'))).to be true
         expect(File.exist?(File.join(tmp_dir, 'work', 'project_a.txt'))).to be true
-        expect(File.exist?(File.join(tmp_dir, 'other.txt'))).to be true # 整理対象外
+        expect(File.exist?(File.join(tmp_dir, 'other.txt'))).to be true # not organized
 
         expect(File.exist?(File.join(tmp_dir, 'test.jpg'))).to be false
       end
     end
 
-    context '再帰モードの場合' do
+    context 'in recursive mode' do
       before do
         # Create subdirectories and files
         FileUtils.mkdir_p(File.join(tmp_dir, 'subdir1'))
@@ -182,7 +182,7 @@ RSpec.describe TidyFileOrganizer::Organizer do
         FileUtils.touch(File.join(tmp_dir, 'subdir2', 'nested', 'image.jpg'))
       end
 
-      it 'サブディレクトリ内のファイルも整理される (Dry-run)' do
+      it 'organizes files in subdirectories (dry-run)' do
         output = capture_stdout { organizer.run(dry_run: true, recursive: true) }
 
         expect(output).to match(%r{subdir1/photo\.jpg})
@@ -191,7 +191,7 @@ RSpec.describe TidyFileOrganizer::Organizer do
         expect(output).to include(TidyFileOrganizer::I18n.t('organizer.recursive_mode'))
       end
 
-      it 'サブディレクトリ内のファイルも実際に移動される (Force)' do
+      it 'actually moves files in subdirectories (force)' do
         organizer.run(dry_run: false, recursive: true)
 
         # Root level files are moved

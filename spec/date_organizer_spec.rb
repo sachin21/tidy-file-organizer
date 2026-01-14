@@ -27,8 +27,8 @@ RSpec.describe TidyFileOrganizer::DateOrganizer do
       File.utime(Time.new(2024, 3, 10), Time.new(2024, 3, 10), @file3)
     end
 
-    context 'year パターンの場合' do
-      it 'ファイルが年ごとに整理される (Dry-run)' do
+    context 'with year pattern' do
+      it 'organizes files by year (dry-run)' do
         output = capture_stdout { date_organizer.organize_by_date(pattern: 'year', dry_run: true) }
 
         expect(output).to include('[Dry-run]')
@@ -41,7 +41,7 @@ RSpec.describe TidyFileOrganizer::DateOrganizer do
         expect(Dir.exist?(File.join(tmp_dir, '2023'))).to be false
       end
 
-      it 'ファイルが年ごとに実際に整理される (Force)' do
+      it 'actually organizes files by year (force)' do
         date_organizer.organize_by_date(pattern: 'year', dry_run: false)
 
         expect(File.exist?(File.join(tmp_dir, '2023', 'file1.txt'))).to be true
@@ -54,8 +54,8 @@ RSpec.describe TidyFileOrganizer::DateOrganizer do
       end
     end
 
-    context 'year-month パターンの場合' do
-      it 'ファイルが年月ごとに整理される (Force)' do
+    context 'with year-month pattern' do
+      it 'organizes files by year-month (force)' do
         date_organizer.organize_by_date(pattern: 'year-month', dry_run: false)
 
         expect(File.exist?(File.join(tmp_dir, '2023-01', 'file1.txt'))).to be true
@@ -64,8 +64,8 @@ RSpec.describe TidyFileOrganizer::DateOrganizer do
       end
     end
 
-    context 'year-month-day パターンの場合' do
-      it 'ファイルが年月日ごとに整理される (Force)' do
+    context 'with year-month-day pattern' do
+      it 'organizes files by year-month-day (force)' do
         date_organizer.organize_by_date(pattern: 'year-month-day', dry_run: false)
 
         expect(File.exist?(File.join(tmp_dir, '2023-01-15', 'file1.txt'))).to be true

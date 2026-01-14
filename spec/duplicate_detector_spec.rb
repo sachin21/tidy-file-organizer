@@ -11,7 +11,7 @@ RSpec.describe TidyFileOrganizer::DuplicateDetector do
   end
 
   describe '#find_duplicates' do
-    context '重複ファイルが存在する場合' do
+    context 'when duplicate files exist' do
       before do
         # Create 3 files with same content
         @file1 = File.join(tmp_dir, 'file1.txt')
@@ -25,7 +25,7 @@ RSpec.describe TidyFileOrganizer::DuplicateDetector do
         File.write(@unique_file, 'different content')
       end
 
-      it '重複ファイルを正しく検出する' do
+      it 'correctly detects duplicate files' do
         duplicates = detector.find_duplicates(recursive: false)
 
         expect(duplicates.size).to eq(1)
@@ -36,14 +36,14 @@ RSpec.describe TidyFileOrganizer::DuplicateDetector do
       end
     end
 
-    context '重複ファイルが存在しない場合' do
+    context 'when no duplicate files exist' do
       before do
         File.write(File.join(tmp_dir, 'file1.txt'), 'content1')
         File.write(File.join(tmp_dir, 'file2.txt'), 'content2')
         File.write(File.join(tmp_dir, 'file3.txt'), 'content3')
       end
 
-      it '空のハッシュを返す' do
+      it 'returns an empty hash' do
         duplicates = detector.find_duplicates(recursive: false)
         expect(duplicates).to be_empty
       end
@@ -62,8 +62,8 @@ RSpec.describe TidyFileOrganizer::DuplicateDetector do
       File.write(@file3, 'same content')
     end
 
-    context 'Dry-run モードの場合' do
-      it 'ファイルは削除されない' do
+    context 'in dry-run mode' do
+      it 'does not delete files' do
         output = capture_stdout { detector.remove_duplicates(dry_run: true, recursive: false, interactive: false) }
 
         expect(output).to include('[Dry-run]')
@@ -73,8 +73,8 @@ RSpec.describe TidyFileOrganizer::DuplicateDetector do
       end
     end
 
-    context 'Force モードの場合' do
-      it '最初のファイルを残し、残りを削除する' do
+    context 'in force mode' do
+      it 'keeps first file and deletes the rest' do
         # Test with interactive mode disabled
         detector.remove_duplicates(dry_run: false, recursive: false, interactive: false)
 
@@ -88,7 +88,7 @@ RSpec.describe TidyFileOrganizer::DuplicateDetector do
       end
     end
 
-    context 'インタラクティブモードの場合' do
+    context 'in interactive mode' do
       before do
         # Create files with same content
         File.write(@file1, 'same content')
@@ -96,7 +96,7 @@ RSpec.describe TidyFileOrganizer::DuplicateDetector do
         File.write(@file3, 'same content')
       end
 
-      it 'yesを入力すると削除が実行される' do
+      it 'executes deletion when user inputs yes' do
         # Mock stdin
         allow($stdin).to receive(:gets).and_return("yes\n")
 
@@ -111,7 +111,7 @@ RSpec.describe TidyFileOrganizer::DuplicateDetector do
         expect(existing_files.size).to eq(1)
       end
 
-      it 'noを入力すると削除がキャンセルされる' do
+      it 'cancels deletion when user inputs no' do
         # Mock stdin
         allow($stdin).to receive(:gets).and_return("no\n")
 
@@ -125,7 +125,7 @@ RSpec.describe TidyFileOrganizer::DuplicateDetector do
         expect(File.exist?(@file3)).to be true
       end
 
-      it '無効な入力の場合は削除がキャンセルされる' do
+      it 'cancels deletion when user inputs invalid response' do
         # Mock stdin
         allow($stdin).to receive(:gets).and_return("maybe\n")
 

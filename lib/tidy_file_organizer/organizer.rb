@@ -2,11 +2,14 @@ require 'fileutils'
 
 module TidyFileOrganizer
   class Organizer
+    include FileHelper
+
     attr_reader :target_dir
 
     def initialize(target_dir)
       @target_dir = File.expand_path(target_dir)
       @config_manager = Config.new(@target_dir)
+      @file_mover = FileMover.new(@target_dir)
       @organized_dirs = []
     end
 
@@ -16,60 +19,43 @@ module TidyFileOrganizer
 
     def run(dry_run: true, recursive: false)
       config = @config_manager.load
+      return handle_missing_config unless config
 
-      unless config
-        puts "設定が見つかりません。先に 'setup' コマンドを実行してください。"
-        return
-      end
+      print_header(dry_run, recursive)
 
-      mode_label = dry_run ? '[Dry-run モード]' : ''
-      recursive_label = recursive ? '[再帰モード]' : ''
-      puts "--- 整理を開始します (#{@target_dir}) #{mode_label} #{recursive_label} ---"
+      @organized_dirs = extract_organized_dirs(config)
 
-      # 整理先として使用されるディレクトリ名を収集
-      @organized_dirs = (config[:extensions].keys + config[:keywords].keys).uniq
-
-      files = collect_files(recursive: recursive)
-
-      if files.empty?
-        puts '整理対象のファイルが見つかりませんでした。'
-        return
-      end
+      files = collect_files(@target_dir, recursive: recursive, exclude_dirs: @organized_dirs)
+      return handle_empty_files if files.empty?
 
       organize_files(files, config, dry_run)
-
-      # 空ディレクトリのクリーンアップ
       cleanup_empty_directories if recursive && !dry_run
 
-      puts "\n整理が完了しました。"
+      print_completion_message
     end
 
     private
 
-    def collect_files(recursive: false)
-      if recursive
-        collect_files_recursively(@target_dir)
-      else
-        Dir.children(@target_dir)
-          .map { |entry| File.join(@target_dir, entry) }
-          .select { |path| File.file?(path) }
-      end
+    def handle_missing_config
+      puts "設定が見つかりません。先に 'setup' コマンドを実行してください。"
     end
 
-    def collect_files_recursively(dir)
-      files = []
-      Dir.children(dir).each do |entry|
-        # 整理先ディレクトリはスキップ
-        next if @organized_dirs.include?(entry)
+    def print_header(dry_run, recursive)
+      mode_label = dry_run ? '[Dry-run モード]' : ''
+      recursive_label = recursive ? '[再帰モード]' : ''
+      puts "--- 整理を開始します (#{@target_dir}) #{mode_label} #{recursive_label} ---"
+    end
 
-        path = File.join(dir, entry)
-        if File.file?(path)
-          files << path
-        elsif File.directory?(path)
-          files.concat(collect_files_recursively(path))
-        end
-      end
-      files
+    def extract_organized_dirs(config)
+      (config[:extensions].keys + config[:keywords].keys).uniq
+    end
+
+    def handle_empty_files
+      puts '整理対象のファイルが見つかりませんでした。'
+    end
+
+    def print_completion_message
+      puts "\n整理が完了しました。"
     end
 
     def organize_files(files, config, dry_run)
@@ -77,7 +63,7 @@ module TidyFileOrganizer
         destination_dir = determine_destination(file_path, config)
         next unless destination_dir
 
-        move_file(file_path, destination_dir, dry_run: dry_run)
+        @file_mover.move_file(file_path, destination_dir, dry_run: dry_run)
       end
     end
 
@@ -107,46 +93,25 @@ module TidyFileOrganizer
       nil
     end
 
-    def move_file(file_path, dest_dir_name, dry_run:)
-      filename = File.basename(file_path)
-      relative_path = file_path.sub("#{@target_dir}/", '')
-      dest_dir = File.join(@target_dir, dest_dir_name)
-      dest_path = File.join(dest_dir, filename)
+    def cleanup_empty_directories
+      Dir.glob(File.join(@target_dir, '**/*')).reverse_each do |path|
+        next unless should_cleanup?(path)
 
-      # ファイル名の重複チェック
-      if File.exist?(dest_path) && file_path != dest_path
-        conflict_msg = "⚠️  Conflict: #{relative_path} -> #{dest_dir_name}/ (ファイル名が重複しています)"
-        puts dry_run ? "[Dry-run] #{conflict_msg}" : conflict_msg
-        return
-      end
-
-      # 移動元と移動先が同じ場合はスキップ
-      if file_path == dest_path
-        puts "[Skip] #{relative_path} (既に正しい場所にあります)" if dry_run
-        return
-      end
-
-      if dry_run
-        puts "[Dry-run] #{relative_path} -> #{dest_dir_name}/"
-      else
-        FileUtils.mkdir_p(dest_dir)
-        FileUtils.mv(file_path, dest_path)
-        puts "Moved: #{relative_path} -> #{dest_dir_name}/"
+        remove_empty_directory(path)
       end
     end
 
-    def cleanup_empty_directories
-      Dir.glob(File.join(@target_dir, '**/*')).reverse_each do |path|
-        next unless File.directory?(path)
-        next if path == @target_dir
-        next if @organized_dirs.include?(File.basename(path))
+    def should_cleanup?(path)
+      File.directory?(path) &&
+        path != @target_dir &&
+        !@organized_dirs.include?(File.basename(path)) &&
+        Dir.empty?(path)
+    end
 
-        next unless Dir.empty?(path)
-
-        Dir.rmdir(path)
-        relative_path = path.sub("#{@target_dir}/", '')
-        puts "Cleaned up: #{relative_path}/ (空ディレクトリを削除)"
-      end
+    def remove_empty_directory(path)
+      Dir.rmdir(path)
+      relative = relative_path(path, @target_dir)
+      puts "Cleaned up: #{relative}/ (空ディレクトリを削除)"
     end
   end
 end

@@ -3,32 +3,32 @@ require 'fileutils'
 
 module TidyFileOrganizer
   class DuplicateDetector
+    include FileHelper
+
+    PROGRESS_UPDATE_INTERVAL = 10
+
     attr_reader :target_dir
 
     def initialize(target_dir)
       @target_dir = File.expand_path(target_dir)
+      @display = DuplicateDisplay.new(@target_dir)
     end
 
     # 重複ファイルを検出
     # recursive: サブディレクトリも検索
     # 戻り値: { hash => [file_paths] } のハッシュ（同じハッシュ値を持つファイルのリスト）
     def find_duplicates(recursive: false)
-      puts "--- 重複ファイルの検出を開始します (#{@target_dir}) ---"
+      print_header
 
-      files = collect_files(recursive: recursive)
+      files = collect_files(@target_dir, recursive: recursive)
+      return handle_empty_files if files.empty?
 
-      if files.empty?
-        puts '検索対象のファイルが見つかりませんでした。'
-        return {}
-      end
-
-      puts "ファイル数: #{files.size}"
-      puts "ハッシュ値を計算中..."
+      print_file_count(files.size)
 
       file_hashes = calculate_file_hashes(files)
       duplicates = find_duplicate_groups(file_hashes)
 
-      display_duplicates(duplicates)
+      @display.display_duplicates(duplicates)
 
       duplicates
     end
@@ -36,75 +36,100 @@ module TidyFileOrganizer
     # 重複ファイルを削除（最初のファイルを残し、残りを削除）
     def remove_duplicates(dry_run: true, recursive: false, interactive: true)
       duplicates = find_duplicates(recursive: recursive)
+      return handle_no_duplicates if duplicates.empty?
 
-      if duplicates.empty?
-        puts "\n重複ファイルは見つかりませんでした。"
-        return
-      end
-
-      # 削除対象のファイルリストを作成
       deletion_plan = build_deletion_plan(duplicates)
+      return unless should_proceed_with_deletion?(deletion_plan, dry_run, interactive)
 
-      if interactive && !dry_run
-        # インタラクティブモード: 削除の確認を求める
-        return unless confirm_deletion(deletion_plan)
-      end
+      execute_deletion(duplicates, dry_run)
+    end
 
+    private
+
+    def print_header
+      puts "--- 重複ファイルの検出を開始します (#{@target_dir}) ---"
+    end
+
+    def print_file_count(count)
+      puts "ファイル数: #{count}"
+      puts "ハッシュ値を計算中..."
+    end
+
+    def handle_empty_files
+      puts '検索対象のファイルが見つかりませんでした。'
+      {}
+    end
+
+    def handle_no_duplicates
+      puts "\n重複ファイルは見つかりませんでした。"
+    end
+
+    def should_proceed_with_deletion?(deletion_plan, dry_run, interactive)
+      return true unless interactive && !dry_run
+
+      confirm_deletion(deletion_plan)
+    end
+
+    def execute_deletion(duplicates, dry_run)
+      print_deletion_header(dry_run)
+
+      stats = delete_duplicate_files(duplicates, dry_run)
+
+      print_deletion_summary(stats)
+    end
+
+    def print_deletion_header(dry_run)
       mode_label = dry_run ? '[Dry-run モード]' : ''
       puts "\n--- 重複ファイルの削除を開始します #{mode_label} ---"
+    end
 
+    def delete_duplicate_files(duplicates, dry_run)
       total_removed = 0
       total_size_saved = 0
 
       duplicates.each do |_hash, file_paths|
-        # 最初のファイルを残し、残りを削除対象とする
         kept_file = file_paths.first
         files_to_remove = file_paths[1..]
 
-        puts "\n保持: #{relative_path(kept_file)}"
+        puts "\n保持: #{relative_path(kept_file, @target_dir)}"
 
         files_to_remove.each do |file_path|
           file_size = File.size(file_path)
-          relative = relative_path(file_path)
-
-          if dry_run
-            puts "[Dry-run] 削除: #{relative} (#{human_readable_size(file_size)})"
-          else
-            File.delete(file_path)
-            puts "削除: #{relative} (#{human_readable_size(file_size)})"
-          end
+          delete_file(file_path, file_size, dry_run)
 
           total_removed += 1
           total_size_saved += file_size
         end
       end
 
-      puts "\n--- サマリー ---"
-      puts "削除されたファイル数: #{total_removed}"
-      puts "節約されたディスク容量: #{human_readable_size(total_size_saved)}"
+      { removed: total_removed, size_saved: total_size_saved }
     end
 
-    private
+    def delete_file(file_path, file_size, dry_run)
+      relative = relative_path(file_path, @target_dir)
 
-    def collect_files(recursive: false)
-      if recursive
-        Dir.glob(File.join(@target_dir, '**', '*')).select { |path| File.file?(path) }
+      if dry_run
+        puts "[Dry-run] 削除: #{relative} (#{human_readable_size(file_size)})"
       else
-        Dir.children(@target_dir)
-          .map { |entry| File.join(@target_dir, entry) }
-          .select { |path| File.file?(path) }
+        File.delete(file_path)
+        puts "削除: #{relative} (#{human_readable_size(file_size)})"
       end
+    end
+
+    def print_deletion_summary(stats)
+      puts "\n--- サマリー ---"
+      puts "削除されたファイル数: #{stats[:removed]}"
+      puts "節約されたディスク容量: #{human_readable_size(stats[:size_saved])}"
     end
 
     def calculate_file_hashes(files)
       file_hashes = {}
 
       files.each_with_index do |file_path, index|
-        print "\r進捗: #{index + 1}/#{files.size}" if (index + 1) % 10 == 0 || index == files.size - 1
+        print_progress(index, files.size)
 
         begin
-          hash = Digest::SHA256.file(file_path).hexdigest
-          file_hashes[file_path] = hash
+          file_hashes[file_path] = Digest::SHA256.file(file_path).hexdigest
         rescue StandardError => e
           puts "\n⚠️  エラー: #{file_path} - #{e.message}"
         end
@@ -114,6 +139,13 @@ module TidyFileOrganizer
       file_hashes
     end
 
+    def print_progress(index, total)
+      current = index + 1
+      return unless (current % PROGRESS_UPDATE_INTERVAL).zero? || current == total
+
+      print "\r進捗: #{current}/#{total}"
+    end
+
     def find_duplicate_groups(file_hashes)
       # ハッシュ値でグループ化
       hash_groups = file_hashes.group_by { |_path, hash| hash }
@@ -121,53 +153,6 @@ module TidyFileOrganizer
       # 2つ以上のファイルを持つグループのみを重複として抽出
       hash_groups.select { |_hash, entries| entries.size > 1 }
                  .transform_values { |entries| entries.map(&:first) }
-    end
-
-    def display_duplicates(duplicates)
-      if duplicates.empty?
-        puts "\n重複ファイルは見つかりませんでした。"
-        return
-      end
-
-      puts "\n=== 重複ファイルの検出結果 ==="
-      puts "重複グループ数: #{duplicates.size}"
-
-      total_duplicates = duplicates.values.sum(&:size) - duplicates.size
-      puts "重複ファイル数: #{total_duplicates}"
-
-      total_waste = 0
-      duplicates.each_with_index do |(hash, file_paths), index|
-        file_size = File.size(file_paths.first)
-        waste_size = file_size * (file_paths.size - 1)
-        total_waste += waste_size
-
-        puts "\n--- グループ #{index + 1} (#{file_paths.size} 件, ハッシュ: #{hash[0..7]}...) ---"
-        puts "ファイルサイズ: #{human_readable_size(file_size)}"
-        puts "無駄な容量: #{human_readable_size(waste_size)}"
-
-        file_paths.each do |path|
-          puts "  - #{relative_path(path)}"
-        end
-      end
-
-      puts "\n合計無駄容量: #{human_readable_size(total_waste)}"
-    end
-
-    def relative_path(file_path)
-      file_path.sub("#{@target_dir}/", '')
-    end
-
-    def human_readable_size(size)
-      units = %w[B KB MB GB TB]
-      unit_index = 0
-      size_float = size.to_f
-
-      while size_float >= 1024.0 && unit_index < units.size - 1
-        size_float /= 1024.0
-        unit_index += 1
-      end
-
-      format('%.2f %s', size_float, units[unit_index])
     end
 
     def build_deletion_plan(duplicates)
@@ -189,25 +174,11 @@ module TidyFileOrganizer
     end
 
     def confirm_deletion(deletion_plan)
-      puts "\n" + "=" * 60
-      puts "  重複ファイル削除の確認"
-      puts "=" * 60
-      puts "削除対象のファイル数: #{deletion_plan[:total_count]}"
-      puts "節約されるディスク容量: #{human_readable_size(deletion_plan[:total_size])}"
-      puts ""
-      puts "削除対象のファイル:"
-      puts ""
+      @display.display_deletion_confirmation(deletion_plan)
+      handle_user_response
+    end
 
-      deletion_plan[:files].each_with_index do |file_info, index|
-        puts "#{index + 1}. #{relative_path(file_info[:path])} (#{human_readable_size(file_info[:size])})"
-        puts "   保持されるファイル: #{relative_path(file_info[:kept_file])}"
-        puts "" if (index + 1) % 5 == 0 && index < deletion_plan[:files].size - 1
-      end
-
-      puts ""
-      puts "=" * 60
-      print "これらのファイルを削除してもよろしいですか? [yes/no]: "
-
+    def handle_user_response
       response = $stdin.gets.chomp.downcase
 
       case response

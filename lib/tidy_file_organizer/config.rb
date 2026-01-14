@@ -21,7 +21,7 @@ module TidyFileOrganizer
 
       config = YAML.load_file(@config_path)
       
-      # デフォルト設定への参照の場合は、デフォルト設定を読み込む
+      # If it's a reference to default config, load the default config
       if config.is_a?(Hash) && config[:use_default]
         language = config[:language] || 'en'
         load_default_config(language)
@@ -33,7 +33,7 @@ module TidyFileOrganizer
     end
 
     def save(config)
-      # デフォルト設定と同じ場合は参照ファイルを作成
+      # If same as default config, create a reference file
       if config_equals_default?(config)
         language = config[:language] || 'en'
         create_default_reference(language)
@@ -85,7 +85,7 @@ module TidyFileOrganizer
     end
 
     def create_default_reference(language = 'en')
-      # デフォルト設定を使用することを示す参照ファイルを作成
+      # Create a reference file indicating to use default config
       reference_config = {
         use_default: true,
         language: language,
@@ -93,12 +93,12 @@ module TidyFileOrganizer
       }
       
       content = <<~HEADER
-        # tidy-file-organizer 設定ファイル（デフォルト設定を使用）
+        # tidy-file-organizer configuration file (using default config)
         # Target directory: #{@target_dir}
         # Configuration file: #{@config_path}
         #
-        # この設定はデフォルト設定（#{language == 'ja' ? 'default.ja.yml' : 'default.yml'}）を使用します。
-        # カスタマイズする場合は、'tidyify setup' を再実行してください。
+        # This configuration uses default config (#{language == 'ja' ? 'default.ja.yml' : 'default.yml'}).
+        # To customize, re-run 'tidyify setup'.
 
       HEADER
       
@@ -107,12 +107,12 @@ module TidyFileOrganizer
 
     def generate_config_content(config)
       header = <<~HEADER
-        # tidy-file-organizer 設定ファイル
+        # tidy-file-organizer configuration file
         # Target directory: #{@target_dir}
         # Configuration file: #{@config_path}
         #
-        # このファイルを直接編集することもできます。
-        # 再度 'tidyify setup' を実行すると上書きされます。
+        # You can edit this file directly.
+        # Running 'tidyify setup' again will overwrite it.
 
       HEADER
 

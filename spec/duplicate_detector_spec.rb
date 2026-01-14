@@ -13,7 +13,7 @@ RSpec.describe TidyFileOrganizer::DuplicateDetector do
   describe '#find_duplicates' do
     context '重複ファイルが存在する場合' do
       before do
-        # 同じ内容のファイルを3つ作成
+        # Create 3 files with same content
         @file1 = File.join(tmp_dir, 'file1.txt')
         @file2 = File.join(tmp_dir, 'file2.txt')
         @file3 = File.join(tmp_dir, 'file3.txt')
@@ -30,7 +30,7 @@ RSpec.describe TidyFileOrganizer::DuplicateDetector do
 
         expect(duplicates.size).to eq(1)
 
-        # 同じ内容のファイルがグループ化されている
+        # Files with same content are grouped
         duplicate_group = duplicates.values.first
         expect(duplicate_group).to contain_exactly(@file1, @file2, @file3)
       end
@@ -52,7 +52,7 @@ RSpec.describe TidyFileOrganizer::DuplicateDetector do
 
   describe '#remove_duplicates' do
     before do
-      # 重複ファイルを作成
+      # Create duplicate files
       @file1 = File.join(tmp_dir, 'file1.txt')
       @file2 = File.join(tmp_dir, 'file2.txt')
       @file3 = File.join(tmp_dir, 'file3.txt')
@@ -75,14 +75,14 @@ RSpec.describe TidyFileOrganizer::DuplicateDetector do
 
     context 'Force モードの場合' do
       it '最初のファイルを残し、残りを削除する' do
-        # インタラクティブモードを無効化してテスト
+        # Test with interactive mode disabled
         detector.remove_duplicates(dry_run: false, recursive: false, interactive: false)
 
-        # 3つのファイルのうち1つだけが残る
+        # Only 1 of 3 files remains
         existing_files = [@file1, @file2, @file3].select { |f| File.exist?(f) }
         expect(existing_files.size).to eq(1)
 
-        # 2つのファイルが削除される
+        # 2 files are deleted
         deleted_files = [@file1, @file2, @file3].reject { |f| File.exist?(f) }
         expect(deleted_files.size).to eq(2)
       end
@@ -90,14 +90,14 @@ RSpec.describe TidyFileOrganizer::DuplicateDetector do
 
     context 'インタラクティブモードの場合' do
       before do
-        # 同じ内容のファイルを作成
+        # Create files with same content
         File.write(@file1, 'same content')
         File.write(@file2, 'same content')
         File.write(@file3, 'same content')
       end
 
       it 'yesを入力すると削除が実行される' do
-        # 標準入力をモック
+        # Mock stdin
         allow($stdin).to receive(:gets).and_return("yes\n")
 
         output = capture_stdout { detector.remove_duplicates(dry_run: false, recursive: false, interactive: true) }
@@ -106,34 +106,34 @@ RSpec.describe TidyFileOrganizer::DuplicateDetector do
         expect(output).to include(TidyFileOrganizer::I18n.t('duplicate_detector.confirm_deletion'))
         expect(output).to include(TidyFileOrganizer::I18n.t('duplicate_detector.executing_deletion'))
 
-        # ファイルが削除される
+        # Files are deleted
         existing_files = [@file1, @file2, @file3].select { |f| File.exist?(f) }
         expect(existing_files.size).to eq(1)
       end
 
       it 'noを入力すると削除がキャンセルされる' do
-        # 標準入力をモック
+        # Mock stdin
         allow($stdin).to receive(:gets).and_return("no\n")
 
         output = capture_stdout { detector.remove_duplicates(dry_run: false, recursive: false, interactive: true) }
 
         expect(output).to include(TidyFileOrganizer::I18n.t('duplicate_detector.deletion_cancelled'))
 
-        # ファイルは削除されない
+        # Files are not deleted
         expect(File.exist?(@file1)).to be true
         expect(File.exist?(@file2)).to be true
         expect(File.exist?(@file3)).to be true
       end
 
       it '無効な入力の場合は削除がキャンセルされる' do
-        # 標準入力をモック
+        # Mock stdin
         allow($stdin).to receive(:gets).and_return("maybe\n")
 
         output = capture_stdout { detector.remove_duplicates(dry_run: false, recursive: false, interactive: true) }
 
         expect(output).to include(TidyFileOrganizer::I18n.t('duplicate_detector.invalid_response'))
 
-        # ファイルは削除されない
+        # Files are not deleted
         expect(File.exist?(@file1)).to be true
         expect(File.exist?(@file2)).to be true
         expect(File.exist?(@file3)).to be true

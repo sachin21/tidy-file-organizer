@@ -10,9 +10,9 @@ RSpec.describe TidyFileOrganizer::Organizer do
   let(:config_file) { File.join(config_dir, "#{Digest::MD5.hexdigest(File.expand_path(tmp_dir))}.yml") }
 
   before do
-    # 設定ディレクトリを作成
+    # Create config directory
     FileUtils.mkdir_p(config_dir)
-    # 既存のテスト用設定ファイルをクリーンアップ
+    # Clean up existing test config file
     FileUtils.rm_f(config_file)
   end
 
@@ -53,10 +53,10 @@ RSpec.describe TidyFileOrganizer::Organizer do
     end
 
     before do
-      # 設定ファイルを保存
+      # Save config file
       File.write(config_file, config.to_yaml)
 
-      # テスト用ファイルを作成
+      # Create test files
       FileUtils.touch(File.join(tmp_dir, 'test.jpg'))
       FileUtils.touch(File.join(tmp_dir, 'project_a.txt'))
       FileUtils.touch(File.join(tmp_dir, 'other.txt'))
@@ -84,7 +84,7 @@ RSpec.describe TidyFileOrganizer::Organizer do
 
     context '再帰モードの場合' do
       before do
-        # サブディレクトリとファイルを作成
+        # Create subdirectories and files
         FileUtils.mkdir_p(File.join(tmp_dir, 'subdir1'))
         FileUtils.mkdir_p(File.join(tmp_dir, 'subdir2', 'nested'))
 
@@ -105,16 +105,16 @@ RSpec.describe TidyFileOrganizer::Organizer do
       it 'サブディレクトリ内のファイルも実際に移動される (Force)' do
         organizer.run(dry_run: false, recursive: true)
 
-        # ルート階層のファイルが移動される
+        # Root level files are moved
         expect(File.exist?(File.join(tmp_dir, 'images', 'test.jpg'))).to be true
         expect(File.exist?(File.join(tmp_dir, 'work', 'project_a.txt'))).to be true
 
-        # サブディレクトリのファイルも移動される
+        # Subdirectory files are also moved
         expect(File.exist?(File.join(tmp_dir, 'images', 'photo.jpg'))).to be true
         expect(File.exist?(File.join(tmp_dir, 'work', 'project_a_doc.txt'))).to be true
         expect(File.exist?(File.join(tmp_dir, 'images', 'image.jpg'))).to be true
 
-        # 元の場所にはない
+        # Not in original location
         expect(File.exist?(File.join(tmp_dir, 'subdir1', 'photo.jpg'))).to be false
         expect(File.exist?(File.join(tmp_dir, 'subdir2', 'project_a_doc.txt'))).to be false
       end

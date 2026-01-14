@@ -14,9 +14,9 @@ module TidyFileOrganizer
       @display = DuplicateDisplay.new(@target_dir)
     end
 
-    # 重複ファイルを検出
-    # recursive: サブディレクトリも検索
-    # 戻り値: { hash => [file_paths] } のハッシュ（同じハッシュ値を持つファイルのリスト）
+    # Detect duplicate files
+    # recursive: also search subdirectories
+    # Returns: Hash of { hash => [file_paths] } (list of files with same hash)
     def find_duplicates(recursive: false)
       print_header
 
@@ -33,7 +33,7 @@ module TidyFileOrganizer
       duplicates
     end
 
-    # 重複ファイルを削除（最初のファイルを残し、残りを削除）
+    # Remove duplicate files (keep first file, delete others)
     def remove_duplicates(dry_run: false, recursive: false, interactive: true)
       duplicates = find_duplicates(recursive: recursive)
       return handle_no_duplicates if duplicates.empty?
@@ -147,10 +147,10 @@ module TidyFileOrganizer
     end
 
     def find_duplicate_groups(file_hashes)
-      # ハッシュ値でグループ化
+      # Group by hash value
       hash_groups = file_hashes.group_by { |_path, hash| hash }
 
-      # 2つ以上のファイルを持つグループのみを重複として抽出
+      # Extract only groups with 2 or more files as duplicates
       hash_groups.select { |_hash, entries| entries.size > 1 }
                  .transform_values { |entries| entries.map(&:first) }
     end

@@ -8,7 +8,7 @@ module TidyFileOrganizer
       @target_dir = File.expand_path(target_dir)
     end
 
-    # ファイルを指定されたディレクトリに移動
+    # Move file to specified directory
     def move_file(file_path, dest_dir_name, dry_run: false)
       filename = File.basename(file_path)
       relative = relative_path(file_path)
@@ -36,7 +36,7 @@ module TidyFileOrganizer
     end
 
     def handle_conflict(relative, dest_dir_name, dry_run)
-      message = "⚠️  Conflict: #{relative} -> #{dest_dir_name}/ (ファイル名が重複しています)"
+      message = "⚠️  Conflict: #{relative} -> #{dest_dir_name}/ (filename conflict)"
       puts dry_run ? "[Dry-run] #{message}" : message
     end
 

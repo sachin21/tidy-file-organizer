@@ -3,7 +3,7 @@ module TidyFileOrganizer
     BYTE_UNITS = %w[B KB MB GB TB].freeze
     BYTES_PER_UNIT = 1024.0
 
-    # ファイルを収集する
+    # Collect files
     def collect_files(target_dir, recursive: false, exclude_dirs: [])
       if recursive
         collect_files_recursively(target_dir, exclude_dirs)
@@ -12,12 +12,12 @@ module TidyFileOrganizer
       end
     end
 
-    # 相対パスを取得
+    # Get relative path
     def relative_path(file_path, base_dir)
       file_path.sub("#{base_dir}/", '')
     end
 
-    # ファイルサイズを人間が読める形式に変換
+    # Convert file size to human-readable format
     def human_readable_size(size)
       unit_index = 0
       size_float = size.to_f

@@ -12,7 +12,7 @@ RSpec.describe TidyFileOrganizer::DateOrganizer do
 
   describe '#organize_by_date' do
     before do
-      # テスト用ファイルを作成
+      # Create test files
       @file1 = File.join(tmp_dir, 'file1.txt')
       @file2 = File.join(tmp_dir, 'file2.txt')
       @file3 = File.join(tmp_dir, 'file3.txt')
@@ -21,7 +21,7 @@ RSpec.describe TidyFileOrganizer::DateOrganizer do
       FileUtils.touch(@file2)
       FileUtils.touch(@file3)
 
-      # ファイルの更新日時を設定
+      # Set file modification times
       File.utime(Time.new(2023, 1, 15), Time.new(2023, 1, 15), @file1)
       File.utime(Time.new(2023, 6, 20), Time.new(2023, 6, 20), @file2)
       File.utime(Time.new(2024, 3, 10), Time.new(2024, 3, 10), @file3)
@@ -36,7 +36,7 @@ RSpec.describe TidyFileOrganizer::DateOrganizer do
         expect(output).to include('file2.txt -> 2023/')
         expect(output).to include('file3.txt -> 2024/')
 
-        # ファイルは移動されていない
+        # Files are not moved
         expect(File.exist?(@file1)).to be true
         expect(Dir.exist?(File.join(tmp_dir, '2023'))).to be false
       end

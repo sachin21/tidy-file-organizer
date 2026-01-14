@@ -13,7 +13,7 @@ module TidyFileOrganizer
         translations = locale == :ja ? TRANSLATIONS_JA : TRANSLATIONS_EN
         text = translations.dig(*key.to_s.split('.')) || key.to_s
         
-        # 変数の置換
+        # Variable substitution
         options.each do |k, v|
           text = text.gsub("%{#{k}}", v.to_s)
         end
@@ -29,7 +29,7 @@ module TidyFileOrganizer
       end
     end
 
-    # 英語の翻訳
+    # English translations
     TRANSLATIONS_EN = {
       'setup' => {
         'title' => 'tidy-file-organizer Setup',
@@ -142,7 +142,7 @@ module TidyFileOrganizer
       },
     }.freeze
 
-    # 日本語の翻訳
+    # Japanese translations
     TRANSLATIONS_JA = {
       'setup' => {
         'title' => 'tidy-file-organizer セットアップ',
@@ -239,11 +239,11 @@ module TidyFileOrganizer
         'opt_pattern' => '  --pattern=<pattern>   日付整理のパターン (year, year-month, year-month-day)',
         'opt_no_confirm' => '  --no-confirm          削除前の確認をスキップします（remove-duplicatesのみ）',
         'examples' => 'Examples:',
-        'ex_setup' => '  tidyify setup                                   # カレントディレクトリをセットアップ
-  tidyify setup ~/Downloads                           # 特定のディレクトリをセットアップ',
-        'ex_run_current' => '  tidyify run                                     # カレントディレクトリを整理',
-        'ex_run_dry' => '  tidyify run ~/Downloads --dry-run               # シミュレーション',
-        'ex_run_exec' => '  tidyify run ~/Downloads --recursive             # 実際に実行',
+        'ex_setup' => '  tidyify setup                                   # Setup current directory
+  tidyify setup ~/Downloads                           # Setup specific directory',
+        'ex_run_current' => '  tidyify run                                     # Organize current directory',
+        'ex_run_dry' => '  tidyify run ~/Downloads --dry-run               # Dry-run simulation',
+        'ex_run_exec' => '  tidyify run ~/Downloads --recursive             # Execute with recursive',
         'ex_organize_date' => '  tidyify organize-by-date ~/Downloads --pattern=year-month',
         'ex_find_dup' => '  tidyify find-duplicates ~/Downloads --recursive',
         'ex_remove_dup' => '  tidyify remove-duplicates ~/Downloads --recursive',

@@ -75,7 +75,7 @@ module TidyFileOrganizer
       input = read_input
       
       if input.empty? && config[:extensions].empty?
-        # 空の場合はデフォルト値を設定
+        # Use default values if empty
         config[:extensions] = default_extensions
       elsif !input.empty?
         config[:extensions] = parse_rule_input(input)
@@ -99,7 +99,7 @@ module TidyFileOrganizer
       input = read_input
       
       if input.empty? && config[:keywords].empty?
-        # 空の場合はデフォルト値を設定
+        # Use default values if empty
         config[:keywords] = default_keywords
       elsif !input.empty?
         config[:keywords] = parse_rule_input(input)

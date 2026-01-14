@@ -27,5 +27,5 @@ module TidyFileOrganizer
   end
 end
 
-# gem install 時に自動実行
+# Auto-execute on gem install
 TidyFileOrganizer::PostInstall.run if __FILE__ == $PROGRAM_NAME

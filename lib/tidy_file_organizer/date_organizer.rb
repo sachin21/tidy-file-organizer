@@ -18,8 +18,8 @@ module TidyFileOrganizer
       @file_mover = FileMover.new(@target_dir)
     end
 
-    # ファイルを日付ベースで整理
-    # pattern: 'year', 'year-month', 'year-month-day'のいずれか
+    # Organize files based on date
+    # pattern: one of 'year', 'year-month', 'year-month-day'
     def organize_by_date(pattern: 'year-month', dry_run: false, recursive: false)
       validate_pattern!(pattern)
 

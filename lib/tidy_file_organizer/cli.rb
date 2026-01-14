@@ -5,7 +5,7 @@ module TidyFileOrganizer
     def initialize(args)
       @args = args
       @command = args[0]
-      # オプションではない最初の引数をディレクトリとして扱う
+      # Treat first non-option argument as directory
       @target_dir = args[1..-1]&.find { |arg| !arg.start_with?('-') }
     end
 
@@ -15,13 +15,13 @@ module TidyFileOrganizer
         exit 1
       end
 
-      # setup と run コマンドの場合、ディレクトリ指定がなければカレントディレクトリを使用
+      # For setup and run commands, use current directory if not specified
       target_dir = @target_dir
       if (@command == 'run' || @command == 'setup') && target_dir.nil?
         target_dir = Dir.pwd
       end
 
-      # setup/run以外のコマンドではディレクトリ指定が必須
+      # For other commands, directory specification is required
       unless target_dir
         puts I18n.t('cli.error_directory_required')
         puts ''
@@ -52,8 +52,8 @@ module TidyFileOrganizer
         detector = DuplicateDetector.new(target_dir)
         dry_run = @args.include?('--dry-run')
         recursive = @args.include?('--recursive') || @args.include?('-r')
-        # デフォルトはインタラクティブモード（確認あり）
-        # --no-confirm オプションで確認をスキップ
+        # Default is interactive mode (with confirmation)
+        # --no-confirm option skips confirmation
         interactive = !@args.include?('--no-confirm')
         detector.remove_duplicates(dry_run: dry_run, recursive: recursive, interactive: interactive)
       end

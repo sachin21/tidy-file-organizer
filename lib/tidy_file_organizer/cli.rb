@@ -1,6 +1,6 @@
 module TidyFileOrganizer
   class CLI
-    COMMANDS = %w[setup run].freeze
+    COMMANDS = %w[setup run organize-by-date find-duplicates remove-duplicates].freeze
 
     def initialize(args)
       @args = args
@@ -14,15 +14,33 @@ module TidyFileOrganizer
         exit 1
       end
 
-      organizer = Organizer.new(@target_dir)
-
       case @command
       when 'setup'
+        organizer = Organizer.new(@target_dir)
         organizer.setup
       when 'run'
+        organizer = Organizer.new(@target_dir)
         dry_run = !@args.include?('--force')
         recursive = @args.include?('--recursive') || @args.include?('-r')
         organizer.run(dry_run: dry_run, recursive: recursive)
+      when 'organize-by-date'
+        date_organizer = DateOrganizer.new(@target_dir)
+        dry_run = !@args.include?('--force')
+        recursive = @args.include?('--recursive') || @args.include?('-r')
+        pattern = extract_pattern || 'year-month'
+        date_organizer.organize_by_date(pattern: pattern, dry_run: dry_run, recursive: recursive)
+      when 'find-duplicates'
+        detector = DuplicateDetector.new(@target_dir)
+        recursive = @args.include?('--recursive') || @args.include?('-r')
+        detector.find_duplicates(recursive: recursive)
+      when 'remove-duplicates'
+        detector = DuplicateDetector.new(@target_dir)
+        dry_run = !@args.include?('--force')
+        recursive = @args.include?('--recursive') || @args.include?('-r')
+        # デフォルトはインタラクティブモード（確認あり）
+        # --no-confirm オプションで確認をスキップ
+        interactive = !@args.include?('--no-confirm')
+        detector.remove_duplicates(dry_run: dry_run, recursive: recursive, interactive: interactive)
       end
     end
 
@@ -32,15 +50,33 @@ module TidyFileOrganizer
       COMMANDS.include?(@command)
     end
 
+    def extract_pattern
+      pattern_arg = @args.find { |arg| arg.start_with?('--pattern=') }
+      return nil unless pattern_arg
+
+      pattern_arg.split('=')[1]
+    end
+
     def show_usage
-      puts 'Usage: tidy-file-organizer [setup|run] [target_directory] [options]'
+      puts 'Usage: tidy-file-organizer [command] [target_directory] [options]'
       puts "\nCommands:"
-      puts '  setup    整理ルールをインタラクティブに設定します'
-      puts '  run      設定に基づいてファイルを整理します'
+      puts '  setup              整理ルールをインタラクティブに設定します'
+      puts '  run                設定に基づいてファイルを整理します'
+      puts '  organize-by-date   ファイルを更新日時ベースで整理します'
+      puts '  find-duplicates    重複ファイルを検出します'
+      puts '  remove-duplicates  重複ファイルを削除します（最初のファイルを保持）'
       puts "\nOptions:"
-      puts '  --force       Dry-runを無効にして実際にファイルを移動します'
-      puts '  --recursive   サブディレクトリ内のファイルも再帰的に整理します'
-      puts '  -r            --recursive の短縮形'
+      puts '  --force               Dry-runを無効にして実際にファイルを移動/削除します'
+      puts '  --recursive, -r       サブディレクトリ内のファイルも再帰的に処理します'
+      puts '  --pattern=<pattern>   日付整理のパターン (year, year-month, year-month-day)'
+      puts '  --no-confirm          削除前の確認をスキップします（remove-duplicatesのみ）'
+      puts "\nExamples:"
+      puts '  tidy-file-organizer setup ~/Downloads'
+      puts '  tidy-file-organizer run ~/Downloads --recursive'
+      puts '  tidy-file-organizer organize-by-date ~/Downloads --pattern=year-month --force'
+      puts '  tidy-file-organizer find-duplicates ~/Downloads --recursive'
+      puts '  tidy-file-organizer remove-duplicates ~/Downloads --recursive --force'
+      puts '  tidy-file-organizer remove-duplicates ~/Downloads --force --no-confirm'
     end
   end
 end

@@ -58,7 +58,7 @@ module TidyFileOrganizer
     end
 
     def show_usage
-      puts 'Usage: tidy-file-organizer [command] [target_directory] [options]'
+      puts 'Usage: tidy-ify [command] [target_directory] [options]'
       puts "\nCommands:"
       puts '  setup              整理ルールをインタラクティブに設定します'
       puts '  run                設定に基づいてファイルを整理します'
@@ -71,12 +71,12 @@ module TidyFileOrganizer
       puts '  --pattern=<pattern>   日付整理のパターン (year, year-month, year-month-day)'
       puts '  --no-confirm          削除前の確認をスキップします（remove-duplicatesのみ）'
       puts "\nExamples:"
-      puts '  tidy-file-organizer setup ~/Downloads'
-      puts '  tidy-file-organizer run ~/Downloads --recursive'
-      puts '  tidy-file-organizer organize-by-date ~/Downloads --pattern=year-month --force'
-      puts '  tidy-file-organizer find-duplicates ~/Downloads --recursive'
-      puts '  tidy-file-organizer remove-duplicates ~/Downloads --recursive --force'
-      puts '  tidy-file-organizer remove-duplicates ~/Downloads --force --no-confirm'
+      puts '  tidy-ify setup ~/Downloads'
+      puts '  tidy-ify run ~/Downloads --recursive'
+      puts '  tidy-ify organize-by-date ~/Downloads --pattern=year-month --force'
+      puts '  tidy-ify find-duplicates ~/Downloads --recursive'
+      puts '  tidy-ify remove-duplicates ~/Downloads --recursive --force'
+      puts '  tidy-ify remove-duplicates ~/Downloads --force --no-confirm'
     end
   end
 end

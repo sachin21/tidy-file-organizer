@@ -34,7 +34,7 @@ gem install ./tidy-file-organizer-0.1.0.gem
 
 ```bash
 bundle install
-ruby -I lib ./exe/tidy-file-organizer [command] [options]
+ruby -I lib ./exe/tidy-ify [command] [options]
 ```
 
 ## Usage
@@ -42,7 +42,7 @@ ruby -I lib ./exe/tidy-file-organizer [command] [options]
 ### 1. Setup (Configure Organization Rules)
 
 ```bash
-tidy-file-organizer setup [directory_path]
+tidy-ify setup [directory_path]
 ```
 
 Configure organization rules interactively:
@@ -68,10 +68,10 @@ Default values:
 
 ```bash
 # Root directory only
-tidy-file-organizer run [directory_path]
+tidy-ify run [directory_path]
 
 # Including subdirectories
-tidy-file-organizer run [directory_path] --recursive
+tidy-ify run [directory_path] --recursive
 ```
 
 Example output:
@@ -87,46 +87,46 @@ Example output:
 
 ```bash
 # Execute with --force option if no issues
-tidy-file-organizer run [directory_path] --force
+tidy-ify run [directory_path] --force
 
 # Combined with recursive mode
-tidy-file-organizer run [directory_path] --recursive --force
+tidy-ify run [directory_path] --recursive --force
 ```
 
 ## Command Reference
 
 ### Basic Organization
 ```
-tidy-file-organizer setup [directory]              # Configure organization rules
-tidy-file-organizer run [directory]                # Dry-run (simulation)
-tidy-file-organizer run [directory] --force        # Actually execute organization
-tidy-file-organizer run [directory] --recursive    # Include subdirectories
-tidy-file-organizer run [directory] -r --force     # Execute in recursive mode
+tidy-ify setup [directory]              # Configure organization rules
+tidy-ify run [directory]                # Dry-run (simulation)
+tidy-ify run [directory] --force        # Actually execute organization
+tidy-ify run [directory] --recursive    # Include subdirectories
+tidy-ify run [directory] -r --force     # Execute in recursive mode
 ```
 
 ### Date-based Organization
 ```
 # Organize by year (e.g., 2023/, 2024/)
-tidy-file-organizer organize-by-date [directory] --pattern=year
+tidy-ify organize-by-date [directory] --pattern=year
 
 # Organize by year-month (e.g., 2023-01/, 2023-06/)
-tidy-file-organizer organize-by-date [directory] --pattern=year-month
+tidy-ify organize-by-date [directory] --pattern=year-month
 
 # Organize by year-month-day (e.g., 2023-01-15/)
-tidy-file-organizer organize-by-date [directory] --pattern=year-month-day --force
+tidy-ify organize-by-date [directory] --pattern=year-month-day --force
 ```
 
 ### Duplicate File Management
 ```
 # Find duplicate files
-tidy-file-organizer find-duplicates [directory] --recursive
+tidy-ify find-duplicates [directory] --recursive
 
 # Remove duplicate files (keeps first file, deletes others)
 # Interactive mode: Asks for confirmation before deletion
-tidy-file-organizer remove-duplicates [directory] --recursive --force
+tidy-ify remove-duplicates [directory] --recursive --force
 
 # Skip confirmation with --no-confirm option
-tidy-file-organizer remove-duplicates [directory] --recursive --force --no-confirm
+tidy-ify remove-duplicates [directory] --recursive --force --no-confirm
 ```
 
 **Note**: By default, `remove-duplicates` asks for confirmation with a [yes/no] prompt before deleting files. Use `--no-confirm` to skip this confirmation.
@@ -184,12 +184,12 @@ bundle exec rspec
 
 ```bash
 # English filenames
-ruby -I lib ./exe/tidy-file-organizer setup spec/data/en
-ruby -I lib ./exe/tidy-file-organizer run spec/data/en --recursive
+ruby -I lib ./exe/tidy-ify setup spec/data/en
+ruby -I lib ./exe/tidy-ify run spec/data/en --recursive
 
 # Japanese filenames
-ruby -I lib ./exe/tidy-file-organizer setup spec/data/ja
-ruby -I lib ./exe/tidy-file-organizer run spec/data/ja --recursive
+ruby -I lib ./exe/tidy-ify setup spec/data/ja
+ruby -I lib ./exe/tidy-ify run spec/data/ja --recursive
 ```
 
 ## Technical Specifications

@@ -5,7 +5,8 @@ module TidyFileOrganizer
     def initialize(args)
       @args = args
       @command = args[0]
-      @target_dir = args[1]
+      # オプションではない最初の引数をディレクトリとして扱う
+      @target_dir = args[1..-1]&.find { |arg| !arg.start_with?('-') }
     end
 
     def run
@@ -14,7 +15,14 @@ module TidyFileOrganizer
         exit 1
       end
 
-      unless @target_dir
+      # runコマンドの場合、ディレクトリ指定がなければカレントディレクトリを使用
+      target_dir = @target_dir
+      if @command == 'run' && target_dir.nil?
+        target_dir = Dir.pwd
+      end
+
+      # run以外のコマンドではディレクトリ指定が必須
+      unless target_dir
         puts 'エラー: 対象ディレクトリを指定してください'
         puts ''
         show_usage
@@ -23,25 +31,25 @@ module TidyFileOrganizer
 
       case @command
       when 'setup'
-        organizer = Organizer.new(@target_dir)
+        organizer = Organizer.new(target_dir)
         organizer.setup
       when 'run'
-        organizer = Organizer.new(@target_dir)
+        organizer = Organizer.new(target_dir)
         dry_run = @args.include?('--dry-run')
         recursive = @args.include?('--recursive') || @args.include?('-r')
         organizer.run(dry_run: dry_run, recursive: recursive)
       when 'organize-by-date'
-        date_organizer = DateOrganizer.new(@target_dir)
+        date_organizer = DateOrganizer.new(target_dir)
         dry_run = @args.include?('--dry-run')
         recursive = @args.include?('--recursive') || @args.include?('-r')
         pattern = extract_pattern || 'year-month'
         date_organizer.organize_by_date(pattern: pattern, dry_run: dry_run, recursive: recursive)
       when 'find-duplicates'
-        detector = DuplicateDetector.new(@target_dir)
+        detector = DuplicateDetector.new(target_dir)
         recursive = @args.include?('--recursive') || @args.include?('-r')
         detector.find_duplicates(recursive: recursive)
       when 'remove-duplicates'
-        detector = DuplicateDetector.new(@target_dir)
+        detector = DuplicateDetector.new(target_dir)
         dry_run = @args.include?('--dry-run')
         recursive = @args.include?('--recursive') || @args.include?('-r')
         # デフォルトはインタラクティブモード（確認あり）
@@ -68,7 +76,7 @@ module TidyFileOrganizer
       puts 'Usage: tidyify [command] [target_directory] [options]'
       puts "\nCommands:"
       puts '  setup              整理ルールをインタラクティブに設定します'
-      puts '  run                設定に基づいてファイルを整理します'
+      puts '  run                設定に基づいてファイルを整理します（ディレクトリ省略時はカレントディレクトリ）'
       puts '  organize-by-date   ファイルを更新日時ベースで整理します'
       puts '  find-duplicates    重複ファイルを検出します'
       puts '  remove-duplicates  重複ファイルを削除します（最初のファイルを保持）'
@@ -79,7 +87,8 @@ module TidyFileOrganizer
       puts '  --no-confirm          削除前の確認をスキップします（remove-duplicatesのみ）'
       puts "\nExamples:"
       puts '  tidyify setup ~/Downloads'
-      puts '  tidyify run ~/Downloads --dry-run              # シミュレーション'
+      puts '  tidyify run                                     # カレントディレクトリを整理'
+      puts '  tidyify run ~/Downloads --dry-run               # シミュレーション'
       puts '  tidyify run ~/Downloads --recursive             # 実際に実行'
       puts '  tidyify organize-by-date ~/Downloads --pattern=year-month'
       puts '  tidyify find-duplicates ~/Downloads --recursive'

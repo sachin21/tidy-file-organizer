@@ -11,6 +11,9 @@
 
 - 🗂️ **拡張子ベースの整理**: 画像、書類、スクリプトなど、ファイルタイプごとに自動分類
 - 🔍 **キーワードベースの整理**: ファイル名に含まれるキーワードで柔軟に分類（優先度：高）
+- 📅 **日付ベースの整理**: ファイルの更新日時で整理（年、年月、年月日）
+- 🔍 **重複検出**: SHA-256ハッシュ比較による重複ファイルの検出
+- 🗑️ **重複削除**: 重複ファイルを自動削除（1つのコピーを保持）
 - 🔄 **再帰モード**: サブディレクトリ内のファイルも再帰的に整理
 - 🧪 **Dry-runモード**: 実際に移動する前にシミュレーション実行（デフォルト）
 - ⚠️ **安全な実行**: ファイル名重複の検知、整理済みフォルダの除外
@@ -92,6 +95,7 @@ tidy-file-organizer run [ディレクトリパス] --recursive --force
 
 ## コマンド一覧
 
+### 基本的な整理
 ```
 tidy-file-organizer setup [directory]              # 整理ルールを設定
 tidy-file-organizer run [directory]                # Dry-run（シミュレーション）
@@ -99,6 +103,33 @@ tidy-file-organizer run [directory] --force        # 実際に整理を実行
 tidy-file-organizer run [directory] --recursive    # サブディレクトリも対象
 tidy-file-organizer run [directory] -r --force     # 再帰モードで実行
 ```
+
+### 日付ベースの整理
+```
+# 年ごとに整理（例: 2023/, 2024/）
+tidy-file-organizer organize-by-date [directory] --pattern=year
+
+# 年月ごとに整理（例: 2023-01/, 2023-06/）
+tidy-file-organizer organize-by-date [directory] --pattern=year-month
+
+# 年月日ごとに整理（例: 2023-01-15/）
+tidy-file-organizer organize-by-date [directory] --pattern=year-month-day --force
+```
+
+### 重複ファイル管理
+```
+# 重複ファイルを検出
+tidy-file-organizer find-duplicates [directory] --recursive
+
+# 重複ファイルを削除（最初のファイルを保持、残りを削除）
+# インタラクティブモード: 削除前に確認を求めます
+tidy-file-organizer remove-duplicates [directory] --recursive --force
+
+# 確認をスキップする場合は --no-confirm オプションを使用
+tidy-file-organizer remove-duplicates [directory] --recursive --force --no-confirm
+```
+
+**注意**: デフォルトでは、`remove-duplicates` コマンドはファイル削除前に [yes/no] で確認を求めます。確認をスキップする場合は `--no-confirm` オプションを使用してください。
 
 ## 設定ファイル
 

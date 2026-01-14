@@ -11,6 +11,9 @@ A Ruby-based CLI tool to automatically organize files based on file names, folde
 
 - 🗂️ **Extension-based Organization**: Automatically classify by file types (images, documents, scripts, etc.)
 - 🔍 **Keyword-based Organization**: Flexible classification by keywords in filenames (higher priority)
+- 📅 **Date-based Organization**: Organize files by modification date (year, year-month, year-month-day)
+- 🔍 **Duplicate Detection**: Find duplicate files using SHA-256 hash comparison
+- 🗑️ **Duplicate Removal**: Automatically remove duplicate files while keeping one copy
 - 🔄 **Recursive Mode**: Recursively organize files in subdirectories
 - 🧪 **Dry-run Mode**: Simulate before actual execution (default)
 - ⚠️ **Safe Execution**: Duplicate file detection, organized folder exclusion
@@ -92,6 +95,7 @@ tidy-file-organizer run [directory_path] --recursive --force
 
 ## Command Reference
 
+### Basic Organization
 ```
 tidy-file-organizer setup [directory]              # Configure organization rules
 tidy-file-organizer run [directory]                # Dry-run (simulation)
@@ -99,6 +103,33 @@ tidy-file-organizer run [directory] --force        # Actually execute organizati
 tidy-file-organizer run [directory] --recursive    # Include subdirectories
 tidy-file-organizer run [directory] -r --force     # Execute in recursive mode
 ```
+
+### Date-based Organization
+```
+# Organize by year (e.g., 2023/, 2024/)
+tidy-file-organizer organize-by-date [directory] --pattern=year
+
+# Organize by year-month (e.g., 2023-01/, 2023-06/)
+tidy-file-organizer organize-by-date [directory] --pattern=year-month
+
+# Organize by year-month-day (e.g., 2023-01-15/)
+tidy-file-organizer organize-by-date [directory] --pattern=year-month-day --force
+```
+
+### Duplicate File Management
+```
+# Find duplicate files
+tidy-file-organizer find-duplicates [directory] --recursive
+
+# Remove duplicate files (keeps first file, deletes others)
+# Interactive mode: Asks for confirmation before deletion
+tidy-file-organizer remove-duplicates [directory] --recursive --force
+
+# Skip confirmation with --no-confirm option
+tidy-file-organizer remove-duplicates [directory] --recursive --force --no-confirm
+```
+
+**Note**: By default, `remove-duplicates` asks for confirmation with a [yes/no] prompt before deleting files. Use `--no-confirm` to skip this confirmation.
 
 ## Configuration Files
 

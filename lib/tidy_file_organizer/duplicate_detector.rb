@@ -47,21 +47,21 @@ module TidyFileOrganizer
     private
 
     def print_header
-      puts "--- 重複ファイルの検出を開始します (#{@target_dir}) ---"
+      puts I18n.t('duplicate_detector.starting', dir: @target_dir)
     end
 
     def print_file_count(count)
-      puts "ファイル数: #{count}"
-      puts "ハッシュ値を計算中..."
+      puts I18n.t('duplicate_detector.file_count', count: count)
+      puts I18n.t('duplicate_detector.calculating')
     end
 
     def handle_empty_files
-      puts '検索対象のファイルが見つかりませんでした。'
+      puts I18n.t('organizer.no_files')
       {}
     end
 
     def handle_no_duplicates
-      puts "\n重複ファイルは見つかりませんでした。"
+      puts "\n#{I18n.t('duplicate_detector.no_duplicates')}"
     end
 
     def should_proceed_with_deletion?(deletion_plan, dry_run, interactive)
@@ -79,8 +79,8 @@ module TidyFileOrganizer
     end
 
     def print_deletion_header(dry_run)
-      mode_label = dry_run ? '[Dry-run モード]' : ''
-      puts "\n--- 重複ファイルの削除を開始します #{mode_label} ---"
+      mode_label = dry_run ? I18n.t('organizer.dry_run_mode') : ''
+      puts I18n.t('duplicate_detector.deletion_starting', mode: mode_label)
     end
 
     def delete_duplicate_files(duplicates, dry_run)
@@ -91,7 +91,7 @@ module TidyFileOrganizer
         kept_file = file_paths.first
         files_to_remove = file_paths[1..]
 
-        puts "\n保持: #{relative_path(kept_file, @target_dir)}"
+        puts "\n#{I18n.t('duplicate_detector.kept', file: relative_path(kept_file, @target_dir))}"
 
         files_to_remove.each do |file_path|
           file_size = File.size(file_path)
@@ -109,17 +109,17 @@ module TidyFileOrganizer
       relative = relative_path(file_path, @target_dir)
 
       if dry_run
-        puts "[Dry-run] 削除: #{relative} (#{human_readable_size(file_size)})"
+        puts "[Dry-run] #{I18n.t('duplicate_detector.deleted', file: relative, size: human_readable_size(file_size))}"
       else
         File.delete(file_path)
-        puts "削除: #{relative} (#{human_readable_size(file_size)})"
+        puts I18n.t('duplicate_detector.deleted', file: relative, size: human_readable_size(file_size))
       end
     end
 
     def print_deletion_summary(stats)
-      puts "\n--- サマリー ---"
-      puts "削除されたファイル数: #{stats[:removed]}"
-      puts "節約されたディスク容量: #{human_readable_size(stats[:size_saved])}"
+      puts "\n#{I18n.t('duplicate_detector.summary')}"
+      puts I18n.t('duplicate_detector.deleted_count', count: stats[:removed])
+      puts I18n.t('duplicate_detector.saved_space', size: human_readable_size(stats[:size_saved]))
     end
 
     def calculate_file_hashes(files)
@@ -143,7 +143,7 @@ module TidyFileOrganizer
       current = index + 1
       return unless (current % PROGRESS_UPDATE_INTERVAL).zero? || current == total
 
-      print "\r進捗: #{current}/#{total}"
+      print "\r#{I18n.t('duplicate_detector.progress', current: current, total: total)}"
     end
 
     def find_duplicate_groups(file_hashes)
@@ -183,13 +183,13 @@ module TidyFileOrganizer
 
       case response
       when 'yes', 'y'
-        puts "削除を実行します..."
+        puts I18n.t('duplicate_detector.executing_deletion')
         true
       when 'no', 'n'
-        puts "削除をキャンセルしました。"
+        puts I18n.t('duplicate_detector.deletion_cancelled')
         false
       else
-        puts "無効な入力です。削除をキャンセルしました。"
+        puts I18n.t('duplicate_detector.invalid_response')
         false
       end
     end

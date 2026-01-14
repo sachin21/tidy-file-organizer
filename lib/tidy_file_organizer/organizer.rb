@@ -37,13 +37,13 @@ module TidyFileOrganizer
     private
 
     def handle_missing_config
-      puts "設定が見つかりません。先に 'setup' コマンドを実行してください。"
+      puts I18n.t('organizer.no_config')
     end
 
     def print_header(dry_run, recursive)
-      mode_label = dry_run ? '[Dry-run モード]' : ''
-      recursive_label = recursive ? '[再帰モード]' : ''
-      puts "--- 整理を開始します (#{@target_dir}) #{mode_label} #{recursive_label} ---"
+      mode_label = dry_run ? I18n.t('organizer.dry_run_mode') : ''
+      recursive_label = recursive ? I18n.t('organizer.recursive_mode') : ''
+      puts I18n.t('organizer.starting', dir: @target_dir, mode: "#{mode_label} #{recursive_label}")
     end
 
     def extract_organized_dirs(config)
@@ -51,11 +51,11 @@ module TidyFileOrganizer
     end
 
     def handle_empty_files
-      puts '整理対象のファイルが見つかりませんでした。'
+      puts I18n.t('organizer.no_files')
     end
 
     def print_completion_message
-      puts "\n整理が完了しました。"
+      puts "\n#{I18n.t('organizer.completed')}"
     end
 
     def organize_files(files, config, dry_run)
@@ -111,7 +111,7 @@ module TidyFileOrganizer
     def remove_empty_directory(path)
       Dir.rmdir(path)
       relative = relative_path(path, @target_dir)
-      puts "Cleaned up: #{relative}/ (空ディレクトリを削除)"
+      puts I18n.t('organizer.cleaned_up', dir: relative)
     end
   end
 end

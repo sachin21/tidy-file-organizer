@@ -26,15 +26,15 @@ module TidyFileOrganizer
     private
 
     def display_no_duplicates
-      puts "\n重複ファイルは見つかりませんでした。"
+      puts "\n#{I18n.t('duplicate_detector.no_duplicates')}"
     end
 
     def print_summary(duplicates)
-      puts "\n=== 重複ファイルの検出結果 ==="
-      puts "重複グループ数: #{duplicates.size}"
+      puts "\n#{I18n.t('duplicate_detector.result_title')}"
+      puts I18n.t('duplicate_detector.duplicate_groups', count: duplicates.size)
 
       total_duplicates = duplicates.values.sum(&:size) - duplicates.size
-      puts "重複ファイル数: #{total_duplicates}"
+      puts I18n.t('duplicate_detector.duplicate_files', count: total_duplicates)
     end
 
     def display_groups(duplicates)
@@ -52,9 +52,9 @@ module TidyFileOrganizer
       file_size = File.size(file_paths.first)
       waste_size = file_size * (file_paths.size - 1)
 
-      puts "\n--- グループ #{index + 1} (#{file_paths.size} 件, ハッシュ: #{hash[0..7]}...) ---"
-      puts "ファイルサイズ: #{human_readable_size(file_size)}"
-      puts "無駄な容量: #{human_readable_size(waste_size)}"
+      puts "\n#{I18n.t('duplicate_detector.group_title', num: index + 1, count: file_paths.size, hash: hash[0..7])}"
+      puts I18n.t('duplicate_detector.file_size', size: human_readable_size(file_size))
+      puts I18n.t('duplicate_detector.wasted_space', size: human_readable_size(waste_size))
 
       file_paths.each do |path|
         puts "  - #{relative_path(path, @target_dir)}"
@@ -64,17 +64,17 @@ module TidyFileOrganizer
     end
 
     def print_total_waste(total_waste)
-      puts "\n合計無駄容量: #{human_readable_size(total_waste)}"
+      puts "\n#{I18n.t('duplicate_detector.total_wasted', size: human_readable_size(total_waste))}"
     end
 
     def print_confirmation_header(deletion_plan)
-      puts "\n#{CONFIRMATION_SEPARATOR}"
-      puts "  重複ファイル削除の確認"
-      puts CONFIRMATION_SEPARATOR
-      puts "削除対象のファイル数: #{deletion_plan[:total_count]}"
-      puts "節約されるディスク容量: #{human_readable_size(deletion_plan[:total_size])}"
+      puts "\n#{I18n.t('duplicate_detector.confirm_separator')}"
+      puts "  #{I18n.t('duplicate_detector.confirm_header')}"
+      puts I18n.t('duplicate_detector.confirm_separator')
+      puts I18n.t('duplicate_detector.files_to_delete', count: deletion_plan[:total_count])
+      puts I18n.t('duplicate_detector.space_to_save', size: human_readable_size(deletion_plan[:total_size]))
       puts ""
-      puts "削除対象のファイル:"
+      puts I18n.t('duplicate_detector.files_list_title')
       puts ""
     end
 
@@ -87,7 +87,7 @@ module TidyFileOrganizer
 
     def display_file_info(file_info, index)
       puts "#{index + 1}. #{relative_path(file_info[:path], @target_dir)} (#{human_readable_size(file_info[:size])})"
-      puts "   保持されるファイル: #{relative_path(file_info[:kept_file], @target_dir)}"
+      puts I18n.t('duplicate_detector.kept_file', file: relative_path(file_info[:kept_file], @target_dir))
     end
 
     def add_spacing(index, total)
@@ -97,8 +97,8 @@ module TidyFileOrganizer
 
     def print_confirmation_footer
       puts ""
-      puts CONFIRMATION_SEPARATOR
-      print "これらのファイルを削除してもよろしいですか? [yes/no]: "
+      puts I18n.t('duplicate_detector.confirm_separator')
+      print I18n.t('duplicate_detector.confirm_deletion')
     end
   end
 end

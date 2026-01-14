@@ -15,15 +15,15 @@ module TidyFileOrganizer
         exit 1
       end
 
-      # runコマンドの場合、ディレクトリ指定がなければカレントディレクトリを使用
+      # setup と run コマンドの場合、ディレクトリ指定がなければカレントディレクトリを使用
       target_dir = @target_dir
-      if @command == 'run' && target_dir.nil?
+      if (@command == 'run' || @command == 'setup') && target_dir.nil?
         target_dir = Dir.pwd
       end
 
-      # run以外のコマンドではディレクトリ指定が必須
+      # setup/run以外のコマンドではディレクトリ指定が必須
       unless target_dir
-        puts 'エラー: 対象ディレクトリを指定してください'
+        puts I18n.t('cli.error_directory_required')
         puts ''
         show_usage
         exit 1
@@ -73,27 +73,27 @@ module TidyFileOrganizer
     end
 
     def show_usage
-      puts 'Usage: tidyify [command] [target_directory] [options]'
-      puts "\nCommands:"
-      puts '  setup              整理ルールをインタラクティブに設定します'
-      puts '  run                設定に基づいてファイルを整理します（ディレクトリ省略時はカレントディレクトリ）'
-      puts '  organize-by-date   ファイルを更新日時ベースで整理します'
-      puts '  find-duplicates    重複ファイルを検出します'
-      puts '  remove-duplicates  重複ファイルを削除します（最初のファイルを保持）'
-      puts "\nOptions:"
-      puts '  --dry-run             実際には実行せず、シミュレーションのみ行います'
-      puts '  --recursive, -r       サブディレクトリ内のファイルも再帰的に処理します'
-      puts '  --pattern=<pattern>   日付整理のパターン (year, year-month, year-month-day)'
-      puts '  --no-confirm          削除前の確認をスキップします（remove-duplicatesのみ）'
-      puts "\nExamples:"
-      puts '  tidyify setup ~/Downloads'
-      puts '  tidyify run                                     # カレントディレクトリを整理'
-      puts '  tidyify run ~/Downloads --dry-run               # シミュレーション'
-      puts '  tidyify run ~/Downloads --recursive             # 実際に実行'
-      puts '  tidyify organize-by-date ~/Downloads --pattern=year-month'
-      puts '  tidyify find-duplicates ~/Downloads --recursive'
-      puts '  tidyify remove-duplicates ~/Downloads --recursive'
-      puts '  tidyify remove-duplicates ~/Downloads --no-confirm'
+      puts I18n.t('cli.usage')
+      puts "\n#{I18n.t('cli.commands')}"
+      puts I18n.t('cli.cmd_setup')
+      puts I18n.t('cli.cmd_run')
+      puts I18n.t('cli.cmd_organize_date')
+      puts I18n.t('cli.cmd_find_dup')
+      puts I18n.t('cli.cmd_remove_dup')
+      puts "\n#{I18n.t('cli.options')}"
+      puts I18n.t('cli.opt_dry_run')
+      puts I18n.t('cli.opt_recursive')
+      puts I18n.t('cli.opt_pattern')
+      puts I18n.t('cli.opt_no_confirm')
+      puts "\n#{I18n.t('cli.examples')}"
+      puts I18n.t('cli.ex_setup')
+      puts I18n.t('cli.ex_run_current')
+      puts I18n.t('cli.ex_run_dry')
+      puts I18n.t('cli.ex_run_exec')
+      puts I18n.t('cli.ex_organize_date')
+      puts I18n.t('cli.ex_find_dup')
+      puts I18n.t('cli.ex_remove_dup')
+      puts I18n.t('cli.ex_remove_no_confirm')
     end
   end
 end

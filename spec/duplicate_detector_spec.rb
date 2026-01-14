@@ -102,9 +102,9 @@ RSpec.describe TidyFileOrganizer::DuplicateDetector do
 
         output = capture_stdout { detector.remove_duplicates(dry_run: false, recursive: false, interactive: true) }
 
-        expect(output).to include('重複ファイル削除の確認')
-        expect(output).to include('これらのファイルを削除してもよろしいですか?')
-        expect(output).to include('削除を実行します...')
+        expect(output).to include(TidyFileOrganizer::I18n.t('duplicate_detector.confirm_header'))
+        expect(output).to include(TidyFileOrganizer::I18n.t('duplicate_detector.confirm_deletion'))
+        expect(output).to include(TidyFileOrganizer::I18n.t('duplicate_detector.executing_deletion'))
 
         # ファイルが削除される
         existing_files = [@file1, @file2, @file3].select { |f| File.exist?(f) }
@@ -117,7 +117,7 @@ RSpec.describe TidyFileOrganizer::DuplicateDetector do
 
         output = capture_stdout { detector.remove_duplicates(dry_run: false, recursive: false, interactive: true) }
 
-        expect(output).to include('削除をキャンセルしました')
+        expect(output).to include(TidyFileOrganizer::I18n.t('duplicate_detector.deletion_cancelled'))
 
         # ファイルは削除されない
         expect(File.exist?(@file1)).to be true
@@ -131,7 +131,7 @@ RSpec.describe TidyFileOrganizer::DuplicateDetector do
 
         output = capture_stdout { detector.remove_duplicates(dry_run: false, recursive: false, interactive: true) }
 
-        expect(output).to include('無効な入力です。削除をキャンセルしました')
+        expect(output).to include(TidyFileOrganizer::I18n.t('duplicate_detector.invalid_response'))
 
         # ファイルは削除されない
         expect(File.exist?(@file1)).to be true

@@ -1,4 +1,5 @@
 require 'tidy_file_organizer/version'
+require 'tidy_file_organizer/i18n'
 require 'tidy_file_organizer/file_helper'
 require 'tidy_file_organizer/file_mover'
 require 'tidy_file_organizer/config'

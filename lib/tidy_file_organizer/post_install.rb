@@ -1,4 +1,5 @@
 require 'fileutils'
+require_relative 'i18n'
 
 module TidyFileOrganizer
   class PostInstall
@@ -13,14 +14,14 @@ module TidyFileOrganizer
       source = File.expand_path('../../config/default.yml', __dir__)
       unless File.exist?(DEFAULT_CONFIG_PATH)
         FileUtils.cp(source, DEFAULT_CONFIG_PATH)
-        puts "✓ デフォルト設定ファイル（英語）を作成しました: #{DEFAULT_CONFIG_PATH}"
+        puts I18n.t('post_install.created_default_en', path: DEFAULT_CONFIG_PATH)
       end
 
       # 日本語版
       source_ja = File.expand_path('../../config/default.ja.yml', __dir__)
       unless File.exist?(DEFAULT_CONFIG_JA_PATH)
         FileUtils.cp(source_ja, DEFAULT_CONFIG_JA_PATH)
-        puts "✓ デフォルト設定ファイル（日本語）を作成しました: #{DEFAULT_CONFIG_JA_PATH}"
+        puts I18n.t('post_install.created_default_ja', path: DEFAULT_CONFIG_JA_PATH)
       end
     end
   end

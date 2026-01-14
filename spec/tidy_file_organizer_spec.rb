@@ -99,7 +99,7 @@ RSpec.describe TidyFileOrganizer::Organizer do
         expect(output).to match(%r{subdir1/photo\.jpg})
         expect(output).to match(%r{subdir2/project_a_doc\.txt})
         expect(output).to match(%r{subdir2/nested/image\.jpg})
-        expect(output).to match(/\[再帰モード\]/)
+        expect(output).to include(TidyFileOrganizer::I18n.t('organizer.recursive_mode'))
       end
 
       it 'サブディレクトリ内のファイルも実際に移動される (Force)' do

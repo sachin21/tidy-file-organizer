@@ -41,7 +41,7 @@ module TidyFileOrganizer
     end
 
     def handle_skip(relative, dry_run)
-      puts "[Skip] #{relative} (既に正しい場所にあります)" if dry_run
+      puts I18n.t('organizer.skip', file: relative) if dry_run
     end
 
     def perform_move(file_path, dest_dir, dest_path, relative, dest_dir_name, dry_run)

@@ -5,10 +5,10 @@ module TidyFileOrganizer
     end
 
     def run(target_dir)
-      puts '=' * 60
-      puts '  tidy-file-organizer セットアップ'
-      puts '=' * 60
-      puts "対象ディレクトリ: #{target_dir}"
+      puts I18n.t('setup.separator')
+      puts "  #{I18n.t('setup.title')}"
+      puts I18n.t('setup.separator')
+      puts I18n.t('setup.target_directory', dir: target_dir)
       puts ''
 
       config = @config_manager.load || @config_manager.default
@@ -22,28 +22,28 @@ module TidyFileOrganizer
 
       @config_manager.save(config)
       puts ''
-      puts '✓ 設定を保存しました'
-      puts "  保存先: #{@config_manager.path}"
+      puts I18n.t('setup.config_saved')
+      puts I18n.t('setup.save_location', path: @config_manager.path)
       puts ''
-      puts '次のステップ:'
-      puts "  1. シミュレーション: tidyify run #{target_dir} --dry-run"
-      puts "  2. 実際に整理を実行: tidyify run #{target_dir}"
+      puts I18n.t('setup.next_steps')
+      puts I18n.t('setup.step_dry_run', dir: target_dir)
+      puts I18n.t('setup.step_execute', dir: target_dir)
     end
 
     private
 
     def setup_language(config)
-      puts '[0] フォルダ名の言語設定'
-      puts '-' * 60
-      puts '説明: 整理先フォルダ名を日本語にするか英語にするか選択します'
+      puts I18n.t('setup.language_setting')
+      puts I18n.t('setup.section_separator')
+      puts I18n.t('setup.language_description')
       puts ''
-      puts '  1: English (例: Images, Documents, Screenshots)'
-      puts '  2: 日本語 (例: 画像, 書類, スクリーンショット)'
+      puts I18n.t('setup.language_option_1')
+      puts I18n.t('setup.language_option_2')
       puts ''
       current = config[:language] || 'en'
-      current_label = current == 'ja' ? '日本語' : 'English'
-      puts "現在の設定: #{current_label}"
-      print "\n選択 (1=English, 2=日本語, Enter=現在の設定のまま): "
+      current_label = current == 'ja' ? I18n.t('setup.japanese') : I18n.t('setup.english')
+      puts I18n.t('setup.current_setting', setting: current_label)
+      print "\n#{I18n.t('setup.language_prompt')}"
       input = read_input.strip
 
       case input
@@ -54,23 +54,24 @@ module TidyFileOrganizer
       when ''
         current
       else
-        puts "無効な入力です。デフォルト（English）を使用します。"
+        puts I18n.t('setup.invalid_input')
         'en'
       end
     end
 
     def setup_extensions(config)
-      puts '[1] 拡張子による整理ルール'
-      puts '-' * 60
-      puts '説明: ファイルの拡張子に基づいて整理先フォルダを指定します'
       puts ''
-      puts '入力形式: 拡張子リスト:フォルダ名 拡張子リスト:フォルダ名 ...'
+      puts I18n.t('setup.extensions_title')
+      puts I18n.t('setup.section_separator')
+      puts I18n.t('setup.extensions_description')
       puts ''
-      puts 'デフォルト値:'
+      puts I18n.t('setup.input_format')
+      puts ''
+      puts I18n.t('setup.default_values')
       show_default_extensions
       puts ''
-      puts "現在の設定: #{format_extension_config(config[:extensions])}"
-      print "\n新しい設定を入力 (デフォルト値を使う場合はEnter): "
+      puts I18n.t('setup.current_config', config: format_extension_config(config[:extensions]))
+      print "\n#{I18n.t('setup.new_config_prompt')}"
       input = read_input
       
       if input.empty? && config[:extensions].empty?
@@ -83,18 +84,18 @@ module TidyFileOrganizer
 
     def setup_keywords(config)
       puts ''
-      puts '[2] キーワードによる整理ルール'
-      puts '-' * 60
-      puts '説明: ファイル名に含まれるキーワードで整理先フォルダを指定します'
-      puts '      ※キーワードは拡張子より優先されます'
+      puts I18n.t('setup.keywords_title')
+      puts I18n.t('setup.section_separator')
+      puts I18n.t('setup.keywords_description')
+      puts I18n.t('setup.keywords_note')
       puts ''
-      puts '入力形式: キーワードリスト:フォルダ名 キーワードリスト:フォルダ名 ...'
+      puts I18n.t('setup.input_format')
       puts ''
-      puts 'デフォルト値:'
+      puts I18n.t('setup.default_values')
       show_default_keywords
       puts ''
-      puts "現在の設定: #{format_keyword_config(config[:keywords])}"
-      print "\n新しい設定を入力 (デフォルト値を使う場合はEnter): "
+      puts I18n.t('setup.current_config', config: format_keyword_config(config[:keywords]))
+      print "\n#{I18n.t('setup.new_config_prompt')}"
       input = read_input
       
       if input.empty? && config[:keywords].empty?
@@ -168,13 +169,13 @@ module TidyFileOrganizer
     end
 
     def format_extension_config(exts)
-      return 'なし' if exts.empty?
+      return I18n.t('setup.none') if exts.empty?
 
       exts.map { |dir, extensions| "#{extensions.join(',')}:#{dir}" }.join(' ')
     end
 
     def format_keyword_config(kws)
-      return 'なし' if kws.empty?
+      return I18n.t('setup.none') if kws.empty?
 
       kws.map { |dir, keywords| "#{keywords.join(',')}:#{dir}" }.join(' ')
     end

@@ -42,14 +42,14 @@ module TidyFileOrganizer
     end
 
     def print_header(pattern, dry_run, recursive)
-      mode_label = dry_run ? '[Dry-run モード]' : ''
-      recursive_label = recursive ? '[再帰モード]' : ''
-      puts "--- 日付ベースの整理を開始します (#{@target_dir}) #{mode_label} #{recursive_label} ---"
-      puts "整理パターン: #{pattern}"
+      mode_label = dry_run ? I18n.t('organizer.dry_run_mode') : ''
+      recursive_label = recursive ? I18n.t('organizer.recursive_mode') : ''
+      puts I18n.t('date_organizer.starting', dir: @target_dir, mode: "#{mode_label} #{recursive_label}")
+      puts I18n.t('date_organizer.pattern', pattern: pattern)
     end
 
     def handle_empty_files
-      puts '整理対象のファイルが見つかりませんでした。'
+      puts I18n.t('organizer.no_files')
     end
 
     def organize_files(files, pattern, dry_run)
@@ -60,7 +60,7 @@ module TidyFileOrganizer
     end
 
     def print_completion_message
-      puts "\n整理が完了しました。"
+      puts "\n#{I18n.t('organizer.completed')}"
     end
 
     def determine_date_folder(file_path, pattern)

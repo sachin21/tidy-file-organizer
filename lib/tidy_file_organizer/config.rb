@@ -19,16 +19,24 @@ module TidyFileOrganizer
     def load
       return nil unless File.exist?(@config_path)
 
-      YAML.load_file(@config_path)
+      config = YAML.load_file(@config_path)
+      
+      # デフォルト設定への参照の場合は、デフォルト設定を読み込む
+      if config.is_a?(Hash) && config[:use_default]
+        language = config[:language] || 'en'
+        load_default_config(language)
+      else
+        config
+      end
     rescue StandardError
       nil
     end
 
     def save(config)
-      # デフォルト設定と同じ場合はシンボリックリンクを作成
+      # デフォルト設定と同じ場合は参照ファイルを作成
       if config_equals_default?(config)
         language = config[:language] || 'en'
-        create_default_symlink(language)
+        create_default_reference(language)
       else
         content = generate_config_content(config)
         File.write(@config_path, content)
@@ -76,13 +84,25 @@ module TidyFileOrganizer
       config == default_config
     end
 
-    def create_default_symlink(language = 'en')
-      # 既存のファイルやリンクを削除
-      FileUtils.rm_f(@config_path) if File.exist?(@config_path)
+    def create_default_reference(language = 'en')
+      # デフォルト設定を使用することを示す参照ファイルを作成
+      reference_config = {
+        use_default: true,
+        language: language,
+        target_directory: @target_dir
+      }
       
-      # 言語に応じたデフォルト設定へのシンボリックリンクを作成
-      default_path = language == 'ja' ? DEFAULT_CONFIG_JA_PATH : DEFAULT_CONFIG_PATH
-      File.symlink(default_path, @config_path)
+      content = <<~HEADER
+        # tidy-file-organizer 設定ファイル（デフォルト設定を使用）
+        # Target directory: #{@target_dir}
+        # Configuration file: #{@config_path}
+        #
+        # この設定はデフォルト設定（#{language == 'ja' ? 'default.ja.yml' : 'default.yml'}）を使用します。
+        # カスタマイズする場合は、'tidyify setup' を再実行してください。
+
+      HEADER
+      
+      File.write(@config_path, content + reference_config.to_yaml)
     end
 
     def generate_config_content(config)

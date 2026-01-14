@@ -43,6 +43,7 @@ ruby -I lib ./exe/tidyify [command] [options]
 
 ```bash
 tidyify setup [directory_path]
+# If directory_path is omitted, uses current directory
 ```
 
 Configure organization rules interactively:
@@ -69,6 +70,7 @@ Default values:
 ```bash
 # Root directory only (simulation)
 tidyify run [directory_path] --dry-run
+# If directory_path is omitted, uses current directory
 
 # Including subdirectories (simulation)
 tidyify run [directory_path] --recursive --dry-run
@@ -88,6 +90,7 @@ Example output:
 ```bash
 # Execute organization (actual file moving)
 tidyify run [directory_path]
+# If directory_path is omitted, uses current directory
 
 # Combined with recursive mode
 tidyify run [directory_path] --recursive
@@ -97,9 +100,9 @@ tidyify run [directory_path] --recursive
 
 ### Basic Organization
 ```
-tidyify setup [directory]                    # Configure organization rules
-tidyify run [directory] --dry-run            # Dry-run (simulation)
-tidyify run [directory]                      # Execute organization
+tidyify setup [directory]                    # Configure organization rules (defaults to current dir)
+tidyify run [directory] --dry-run            # Dry-run (simulation, defaults to current dir)
+tidyify run [directory]                      # Execute organization (defaults to current dir)
 tidyify run [directory] --recursive          # Include subdirectories
 tidyify run [directory] -r --dry-run         # Simulate in recursive mode
 ```

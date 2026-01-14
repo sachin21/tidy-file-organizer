@@ -43,6 +43,7 @@ ruby -I lib ./exe/tidyify [command] [options]
 
 ```bash
 tidyify setup [ディレクトリパス]
+# ディレクトリパスを省略した場合、カレントディレクトリを使用します
 ```
 
 対話形式で整理ルールを設定します：
@@ -69,6 +70,7 @@ tidyify setup [ディレクトリパス]
 ```bash
 # ルートディレクトリのみ（シミュレーション）
 tidyify run [ディレクトリパス] --dry-run
+# ディレクトリパスを省略した場合、カレントディレクトリを使用します
 
 # サブディレクトリも含めて（シミュレーション）
 tidyify run [ディレクトリパス] --recursive --dry-run
@@ -88,6 +90,7 @@ tidyify run [ディレクトリパス] --recursive --dry-run
 ```bash
 # 整理を実行（実際にファイルを移動）
 tidyify run [ディレクトリパス]
+# ディレクトリパスを省略した場合、カレントディレクトリを使用します
 
 # 再帰モードと組み合わせ
 tidyify run [ディレクトリパス] --recursive
@@ -97,9 +100,9 @@ tidyify run [ディレクトリパス] --recursive
 
 ### 基本的な整理
 ```
-tidyify setup [directory]                    # 整理ルールを設定
-tidyify run [directory] --dry-run            # Dry-run（シミュレーション）
-tidyify run [directory]                      # 実際に整理を実行
+tidyify setup [directory]                    # 整理ルールを設定（省略時はカレントディレクトリ）
+tidyify run [directory] --dry-run            # Dry-run（シミュレーション、省略時はカレントディレクトリ）
+tidyify run [directory]                      # 実際に整理を実行（省略時はカレントディレクトリ）
 tidyify run [directory] --recursive          # サブディレクトリも対象
 tidyify run [directory] -r --dry-run         # 再帰モードでシミュレーション
 ```

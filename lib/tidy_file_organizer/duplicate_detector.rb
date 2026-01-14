@@ -34,7 +34,7 @@ module TidyFileOrganizer
     end
 
     # 重複ファイルを削除（最初のファイルを残し、残りを削除）
-    def remove_duplicates(dry_run: true, recursive: false, interactive: true)
+    def remove_duplicates(dry_run: false, recursive: false, interactive: true)
       duplicates = find_duplicates(recursive: recursive)
       return handle_no_duplicates if duplicates.empty?
 

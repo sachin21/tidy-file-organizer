@@ -20,7 +20,7 @@ module TidyFileOrganizer
 
     # ファイルを日付ベースで整理
     # pattern: 'year', 'year-month', 'year-month-day'のいずれか
-    def organize_by_date(pattern: 'year-month', dry_run: true, recursive: false)
+    def organize_by_date(pattern: 'year-month', dry_run: false, recursive: false)
       validate_pattern!(pattern)
 
       print_header(pattern, dry_run, recursive)

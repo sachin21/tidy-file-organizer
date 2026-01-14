@@ -20,12 +20,12 @@ module TidyFileOrganizer
         organizer.setup
       when 'run'
         organizer = Organizer.new(@target_dir)
-        dry_run = !@args.include?('--force')
+        dry_run = @args.include?('--dry-run')
         recursive = @args.include?('--recursive') || @args.include?('-r')
         organizer.run(dry_run: dry_run, recursive: recursive)
       when 'organize-by-date'
         date_organizer = DateOrganizer.new(@target_dir)
-        dry_run = !@args.include?('--force')
+        dry_run = @args.include?('--dry-run')
         recursive = @args.include?('--recursive') || @args.include?('-r')
         pattern = extract_pattern || 'year-month'
         date_organizer.organize_by_date(pattern: pattern, dry_run: dry_run, recursive: recursive)
@@ -35,7 +35,7 @@ module TidyFileOrganizer
         detector.find_duplicates(recursive: recursive)
       when 'remove-duplicates'
         detector = DuplicateDetector.new(@target_dir)
-        dry_run = !@args.include?('--force')
+        dry_run = @args.include?('--dry-run')
         recursive = @args.include?('--recursive') || @args.include?('-r')
         # デフォルトはインタラクティブモード（確認あり）
         # --no-confirm オプションで確認をスキップ
@@ -66,17 +66,18 @@ module TidyFileOrganizer
       puts '  find-duplicates    重複ファイルを検出します'
       puts '  remove-duplicates  重複ファイルを削除します（最初のファイルを保持）'
       puts "\nOptions:"
-      puts '  --force               Dry-runを無効にして実際にファイルを移動/削除します'
+      puts '  --dry-run             実際には実行せず、シミュレーションのみ行います'
       puts '  --recursive, -r       サブディレクトリ内のファイルも再帰的に処理します'
       puts '  --pattern=<pattern>   日付整理のパターン (year, year-month, year-month-day)'
       puts '  --no-confirm          削除前の確認をスキップします（remove-duplicatesのみ）'
       puts "\nExamples:"
       puts '  tidyify setup ~/Downloads'
-      puts '  tidyify run ~/Downloads --recursive'
-      puts '  tidyify organize-by-date ~/Downloads --pattern=year-month --force'
+      puts '  tidyify run ~/Downloads --dry-run              # シミュレーション'
+      puts '  tidyify run ~/Downloads --recursive             # 実際に実行'
+      puts '  tidyify organize-by-date ~/Downloads --pattern=year-month'
       puts '  tidyify find-duplicates ~/Downloads --recursive'
-      puts '  tidyify remove-duplicates ~/Downloads --recursive --force'
-      puts '  tidyify remove-duplicates ~/Downloads --force --no-confirm'
+      puts '  tidyify remove-duplicates ~/Downloads --recursive'
+      puts '  tidyify remove-duplicates ~/Downloads --no-confirm'
     end
   end
 end

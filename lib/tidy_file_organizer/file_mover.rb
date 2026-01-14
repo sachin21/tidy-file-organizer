@@ -9,7 +9,7 @@ module TidyFileOrganizer
     end
 
     # ファイルを指定されたディレクトリに移動
-    def move_file(file_path, dest_dir_name, dry_run: true)
+    def move_file(file_path, dest_dir_name, dry_run: false)
       filename = File.basename(file_path)
       relative = relative_path(file_path)
       dest_dir = File.join(@target_dir, dest_dir_name)

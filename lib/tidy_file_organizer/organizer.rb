@@ -17,7 +17,7 @@ module TidyFileOrganizer
       SetupPrompt.new(@config_manager).run(@target_dir)
     end
 
-    def run(dry_run: true, recursive: false)
+    def run(dry_run: false, recursive: false)
       config = @config_manager.load
       return handle_missing_config unless config
 

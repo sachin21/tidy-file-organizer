@@ -15,7 +15,7 @@
 - 🔍 **重複検出**: SHA-256ハッシュ比較による重複ファイルの検出
 - 🗑️ **重複削除**: 重複ファイルを自動削除（1つのコピーを保持）
 - 🔄 **再帰モード**: サブディレクトリ内のファイルも再帰的に整理
-- 🧪 **Dry-runモード**: 実際に移動する前にシミュレーション実行（デフォルト）
+- 🧪 **Dry-runモード**: --dry-runオプションでシミュレーション実行
 - ⚠️ **安全な実行**: ファイル名重複の検知、整理済みフォルダの除外
 - 🧹 **自動クリーンアップ**: 空になったディレクトリを自動削除
 - 🌏 **日本語対応**: 日本語ファイル名・フォルダ名に完全対応
@@ -67,11 +67,11 @@ tidyify setup [ディレクトリパス]
 ### 2. Dry-run（シミュレーション）
 
 ```bash
-# ルートディレクトリのみ
-tidyify run [ディレクトリパス]
+# ルートディレクトリのみ（シミュレーション）
+tidyify run [ディレクトリパス] --dry-run
 
-# サブディレクトリも含めて
-tidyify run [ディレクトリパス] --recursive
+# サブディレクトリも含めて（シミュレーション）
+tidyify run [ディレクトリパス] --recursive --dry-run
 ```
 
 実行例：
@@ -86,22 +86,22 @@ tidyify run [ディレクトリパス] --recursive
 ### 3. 実際に整理を実行
 
 ```bash
-# 問題がなければ --force オプションで実行
-tidyify run [ディレクトリパス] --force
+# 整理を実行（実際にファイルを移動）
+tidyify run [ディレクトリパス]
 
 # 再帰モードと組み合わせ
-tidyify run [ディレクトリパス] --recursive --force
+tidyify run [ディレクトリパス] --recursive
 ```
 
 ## コマンド一覧
 
 ### 基本的な整理
 ```
-tidyify setup [directory]              # 整理ルールを設定
-tidyify run [directory]                # Dry-run（シミュレーション）
-tidyify run [directory] --force        # 実際に整理を実行
-tidyify run [directory] --recursive    # サブディレクトリも対象
-tidyify run [directory] -r --force     # 再帰モードで実行
+tidyify setup [directory]                    # 整理ルールを設定
+tidyify run [directory] --dry-run            # Dry-run（シミュレーション）
+tidyify run [directory]                      # 実際に整理を実行
+tidyify run [directory] --recursive          # サブディレクトリも対象
+tidyify run [directory] -r --dry-run         # 再帰モードでシミュレーション
 ```
 
 ### 日付ベースの整理
@@ -112,8 +112,8 @@ tidyify organize-by-date [directory] --pattern=year
 # 年月ごとに整理（例: 2023-01/, 2023-06/）
 tidyify organize-by-date [directory] --pattern=year-month
 
-# 年月日ごとに整理（例: 2023-01-15/）
-tidyify organize-by-date [directory] --pattern=year-month-day --force
+# 実行前にシミュレーション
+tidyify organize-by-date [directory] --pattern=year-month-day --dry-run
 ```
 
 ### 重複ファイル管理
@@ -123,10 +123,13 @@ tidyify find-duplicates [directory] --recursive
 
 # 重複ファイルを削除（最初のファイルを保持、残りを削除）
 # インタラクティブモード: 削除前に確認を求めます
-tidyify remove-duplicates [directory] --recursive --force
+tidyify remove-duplicates [directory] --recursive
 
 # 確認をスキップする場合は --no-confirm オプションを使用
-tidyify remove-duplicates [directory] --recursive --force --no-confirm
+tidyify remove-duplicates [directory] --no-confirm
+
+# 削除のシミュレーション
+tidyify remove-duplicates [directory] --dry-run
 ```
 
 **注意**: デフォルトでは、`remove-duplicates` コマンドはファイル削除前に [yes/no] で確認を求めます。確認をスキップする場合は `--no-confirm` オプションを使用してください。

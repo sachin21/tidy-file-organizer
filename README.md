@@ -15,7 +15,7 @@ A Ruby-based CLI tool to automatically organize files based on file names, folde
 - 🔍 **Duplicate Detection**: Find duplicate files using SHA-256 hash comparison
 - 🗑️ **Duplicate Removal**: Automatically remove duplicate files while keeping one copy
 - 🔄 **Recursive Mode**: Recursively organize files in subdirectories
-- 🧪 **Dry-run Mode**: Simulate before actual execution (default)
+- 🧪 **Dry-run Mode**: Simulate before actual execution with --dry-run option
 - ⚠️ **Safe Execution**: Duplicate file detection, organized folder exclusion
 - 🧹 **Auto Cleanup**: Automatically remove empty directories
 - 🌏 **Japanese Support**: Full support for Japanese filenames and folder names
@@ -67,11 +67,11 @@ Default values:
 ### 2. Dry-run (Simulation)
 
 ```bash
-# Root directory only
-tidyify run [directory_path]
+# Root directory only (simulation)
+tidyify run [directory_path] --dry-run
 
-# Including subdirectories
-tidyify run [directory_path] --recursive
+# Including subdirectories (simulation)
+tidyify run [directory_path] --recursive --dry-run
 ```
 
 Example output:
@@ -86,22 +86,22 @@ Example output:
 ### 3. Execute Organization
 
 ```bash
-# Execute with --force option if no issues
-tidyify run [directory_path] --force
+# Execute organization (actual file moving)
+tidyify run [directory_path]
 
 # Combined with recursive mode
-tidyify run [directory_path] --recursive --force
+tidyify run [directory_path] --recursive
 ```
 
 ## Command Reference
 
 ### Basic Organization
 ```
-tidyify setup [directory]              # Configure organization rules
-tidyify run [directory]                # Dry-run (simulation)
-tidyify run [directory] --force        # Actually execute organization
-tidyify run [directory] --recursive    # Include subdirectories
-tidyify run [directory] -r --force     # Execute in recursive mode
+tidyify setup [directory]                    # Configure organization rules
+tidyify run [directory] --dry-run            # Dry-run (simulation)
+tidyify run [directory]                      # Execute organization
+tidyify run [directory] --recursive          # Include subdirectories
+tidyify run [directory] -r --dry-run         # Simulate in recursive mode
 ```
 
 ### Date-based Organization
@@ -112,8 +112,8 @@ tidyify organize-by-date [directory] --pattern=year
 # Organize by year-month (e.g., 2023-01/, 2023-06/)
 tidyify organize-by-date [directory] --pattern=year-month
 
-# Organize by year-month-day (e.g., 2023-01-15/)
-tidyify organize-by-date [directory] --pattern=year-month-day --force
+# Simulate before actual execution
+tidyify organize-by-date [directory] --pattern=year-month-day --dry-run
 ```
 
 ### Duplicate File Management
@@ -123,10 +123,13 @@ tidyify find-duplicates [directory] --recursive
 
 # Remove duplicate files (keeps first file, deletes others)
 # Interactive mode: Asks for confirmation before deletion
-tidyify remove-duplicates [directory] --recursive --force
+tidyify remove-duplicates [directory] --recursive
 
 # Skip confirmation with --no-confirm option
-tidyify remove-duplicates [directory] --recursive --force --no-confirm
+tidyify remove-duplicates [directory] --no-confirm
+
+# Simulate removal
+tidyify remove-duplicates [directory] --dry-run
 ```
 
 **Note**: By default, `remove-duplicates` asks for confirmation with a [yes/no] prompt before deleting files. Use `--no-confirm` to skip this confirmation.

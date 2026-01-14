@@ -5,7 +5,11 @@ module TidyFileOrganizer
     end
 
     def run(target_dir)
-      puts "--- #{target_dir} の整理設定 ---"
+      puts "=" * 60
+      puts "  tidy-file-organizer セットアップ"
+      puts "=" * 60
+      puts "対象ディレクトリ: #{target_dir}"
+      puts ""
 
       config = @config_manager.load || @config_manager.default
 
@@ -13,21 +17,43 @@ module TidyFileOrganizer
       setup_keywords(config)
 
       @config_manager.save(config)
-      puts "\n設定を保存しました: #{@config_manager.path}"
+      puts ""
+      puts "✓ 設定を保存しました"
+      puts "  保存先: #{@config_manager.path}"
+      puts ""
+      puts "次のステップ:"
+      puts "  1. Dry-run でシミュレーション: tidy-file-organizer run #{target_dir}"
+      puts "  2. 実際に整理を実行: tidy-file-organizer run #{target_dir} --force"
     end
 
     private
 
     def setup_extensions(config)
-      puts "\n[1] 拡張子ベースの整理設定 (例: jpg,png:images pdf:docs)"
-      print "現在の設定: #{format_extension_config(config[:extensions])}\n新しい設定を入力 (スキップはEnter): "
+      puts "[1] 拡張子による整理ルール"
+      puts "-" * 60
+      puts "説明: ファイルの拡張子に基づいて整理先フォルダを指定します"
+      puts ""
+      puts "入力形式: 拡張子リスト:フォルダ名 拡張子リスト:フォルダ名 ..."
+      puts "例: jpg,png,gif:画像 pdf,docx:書類 rb,py,js:コード"
+      puts ""
+      puts "現在の設定: #{format_extension_config(config[:extensions])}"
+      print "\n新しい設定を入力 (変更しない場合はEnter): "
       input = read_input
       config[:extensions] = parse_rule_input(input) unless input.empty?
     end
 
     def setup_keywords(config)
-      puts "\n[2] キーワードベースの整理設定 (例: project_a:work billing:invoice)"
-      print "現在の設定: #{format_keyword_config(config[:keywords])}\n新しい設定を入力 (スキップはEnter): "
+      puts ""
+      puts "[2] キーワードによる整理ルール"
+      puts "-" * 60
+      puts "説明: ファイル名に含まれるキーワードで整理先フォルダを指定します"
+      puts "      ※キーワードは拡張子より優先されます"
+      puts ""
+      puts "入力形式: キーワードリスト:フォルダ名 キーワードリスト:フォルダ名 ..."
+      puts "例: スクリーンショット:スクショ 請求書:経理 議事録:会議"
+      puts ""
+      puts "現在の設定: #{format_keyword_config(config[:keywords])}"
+      print "\n新しい設定を入力 (変更しない場合はEnter): "
       input = read_input
       config[:keywords] = parse_rule_input(input) unless input.empty?
     end

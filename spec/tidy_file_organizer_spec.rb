@@ -1,22 +1,24 @@
 require "tidy_file_organizer"
 require "fileutils"
 require "tmpdir"
+require "digest"
 
 RSpec.describe TidyFileOrganizer::Organizer do
   let(:tmp_dir) { Dir.mktmpdir }
   let(:organizer) { TidyFileOrganizer::Organizer.new(tmp_dir) }
-  let(:config_dir) { File.expand_path("~/.tidy-file-organizer/configs") }
+  let(:config_dir) { File.expand_path('~/.config/tidy-file-organizer') }
+  let(:config_file) { File.join(config_dir, "#{Digest::MD5.hexdigest(File.expand_path(tmp_dir))}.yml") }
 
   before do
-    # テスト実行前に設定ディレクトリを作成（もしなければ）
-    FileUtils.mkdir_p(config_dir)
-    # 既存のテスト用設定ファイルをクリーンアップ（ハッシュ衝突回避のため）
-    config_file = File.join(config_dir, "#{Digest::MD5.hexdigest(File.expand_path(tmp_dir))}.yml")
+    # 設定ディレクトリを作成
+    FileUtils.mkdir_p(config_dir) unless Dir.exist?(config_dir)
+    # 既存のテスト用設定ファイルをクリーンアップ
     File.delete(config_file) if File.exist?(config_file)
   end
 
   after do
     FileUtils.remove_entry tmp_dir
+    File.delete(config_file) if File.exist?(config_file)
   end
 
   describe "#determine_destination" do
@@ -52,7 +54,6 @@ RSpec.describe TidyFileOrganizer::Organizer do
 
     before do
       # 設定ファイルを保存
-      config_file = File.join(config_dir, "#{Digest::MD5.hexdigest(File.expand_path(tmp_dir))}.yml")
       File.write(config_file, config.to_yaml)
 
       # テスト用ファイルを作成

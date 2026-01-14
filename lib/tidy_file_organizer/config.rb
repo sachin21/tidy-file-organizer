@@ -4,11 +4,12 @@ require 'digest'
 
 module TidyFileOrganizer
   class Config
-    CONFIG_DIR = File.expand_path('~/.tidy-file-organizer/configs').freeze
+    CONFIG_DIR = File.expand_path('~/.config/tidy-file-organizer').freeze
 
     def initialize(target_dir)
       @target_dir = File.expand_path(target_dir)
-      @config_path = File.join(CONFIG_DIR, "#{Digest::MD5.hexdigest(@target_dir)}.yml")
+      @config_filename = "#{Digest::MD5.hexdigest(@target_dir)}.yml"
+      @config_path = File.join(CONFIG_DIR, @config_filename)
       FileUtils.mkdir_p(CONFIG_DIR) unless Dir.exist?(CONFIG_DIR)
     end
 

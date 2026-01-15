@@ -65,10 +65,10 @@ PLATFORMS
 
 DEPENDENCIES
   rake (~> 13.0)
-  rspec (~> 3.0, >= 0)
-  rubocop (~> 1.0, >= 0)
-  rubocop-performance (~> 1.0, >= 0)
-  rubocop-rspec (~> 3.0, >= 0)
+  rspec
+  rubocop
+  rubocop-performance
+  rubocop-rspec
   tidy-file-organizer!
 
 CHECKSUMS
@@ -99,4 +99,4 @@ CHECKSUMS
   unicode-emoji (4.2.0) sha256=519e69150f75652e40bf736106cfbc8f0f73aa3fb6a65afe62fefa7f80b0f80f
 
 BUNDLED WITH
-  4.0.1
+   2.5.23

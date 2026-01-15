@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.3] - 2026-01-15
+
+### Documentation
+- Add LICENSE file with MIT License and CC BY 3.0 exception for RuboCop config
+- Clarify license scope in README files (English and Japanese)
+- Explicitly document that `.rubocop.cookpad-styleguide.yml` is not covered by MIT License
+
 ## [1.0.2] - 2026-01-15
 
 ### Fixed

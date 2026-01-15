@@ -213,6 +213,8 @@ ruby -I lib ./exe/tidyify run spec/data/ja --recursive
 
 MIT License
 
+**Note**: The file `.rubocop.cookpad-styleguide.yml` is not covered by the MIT License. It is part of [Cookpad's Ruby Style Guide](https://github.com/cookpad/styleguide) and is licensed under [CC BY 3.0](https://creativecommons.org/licenses/by/3.0/).
+
 ## Acknowledgments
 
 This project uses [Cookpad's Ruby Style Guide](https://github.com/cookpad/styleguide) for RuboCop configuration, which is licensed under [CC BY 3.0](https://creativecommons.org/licenses/by/3.0/).

@@ -1,23 +1,23 @@
-# 変更履歴
+# Changelog
 
 ## [1.0.2] - 2026-01-15
 
-### 修正
-- CI互換性のためBundlerバージョンを2.5.23にダウングレード
+### Fixed
+- Downgrade Bundler version to 2.5.23 for CI compatibility
 
-### テスト
-- RSpecテストを英語で書き直し
-- Phase 1とパターンマッチングのテストデータを拡張
-- Phase 1とパターンマッチングの包括的なテストを追加
+### Tests
+- Rewrite RSpec tests in English
+- Expand test data for Phase 1 and pattern matching
+- Add comprehensive tests for Phase 1 and pattern matching
 
-### ドキュメント
-- アーキテクチャドキュメントとRuboCop設定を更新
+### Documentation
+- Update architecture documentation and RuboCop configuration
 
-## [1.0.1] - (以前のリリース)
+## [1.0.1] - (Previous Release)
 
-初期リリース版の機能：
-- ファイル拡張子、キーワード、正規表現パターンに基づいたファイル整理
-- 日付によるファイル整理機能
-- 重複ファイルの検出と削除
-- 英語/日本語の国際化対応
-- MD5ハッシュを使用したディレクトリごとの設定管理
+Initial release features:
+- File organization based on extensions, keywords, and regex patterns
+- Date-based file organization
+- Duplicate file detection and removal
+- Internationalization support (English/Japanese)
+- Per-directory configuration management using MD5 hashes

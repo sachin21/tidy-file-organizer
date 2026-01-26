@@ -215,6 +215,19 @@ MIT License
 
 **Note**: The file `.rubocop.cookpad-styleguide.yml` is not covered by the MIT License. It is part of [Cookpad's Ruby Style Guide](https://github.com/cookpad/styleguide) and is licensed under [CC BY 3.0](https://creativecommons.org/licenses/by/3.0/).
 
+## Disclaimer
+
+**IMPORTANT: Please read carefully before using this tool.**
+
+- This tool automatically moves and deletes files based on your configuration and commands.
+- The author assumes **no responsibility** for any data loss, file corruption, or other damages resulting from the use of this tool, **including damages caused by software bugs or defects**.
+- Even if bugs or defects in this software cause unexpected behavior or data loss, the author bears no liability.
+- **Always create backups** of important files and directories before running this tool.
+- It is strongly recommended to use `--dry-run` mode first to preview changes before actual execution.
+- The duplicate detection and removal features permanently delete files. Use with extreme caution.
+- This tool is provided "as is" without any warranty of any kind, either expressed or implied, including but not limited to warranties of merchantability, fitness for a particular purpose, or non-infringement.
+- **Use at your own risk.** You are solely responsible for any consequences of using this tool.
+
 ## Acknowledgments
 
 This project uses [Cookpad's Ruby Style Guide](https://github.com/cookpad/styleguide) for RuboCop configuration, which is licensed under [CC BY 3.0](https://creativecommons.org/licenses/by/3.0/).
